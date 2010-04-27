@@ -116,6 +116,6 @@
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) R:\JLP
 copy $(SolutionDir)\Readme.txt $(SolutionDir)\obj\Debug\Readme.txt 
-"C:\Program Files\7-Zip\7z.exe" u -tzip "$(SolutionDir)\obj\Debug\Version.zip" "$(SolutionDir)\obj\Debug\Readme.txt" "$(SolutionDir)\obj\Debug\Version.dll" "$(SolutionDir)\obj\Debug\SharpSvn.dll"</PostBuildEvent>
+"C:\Program Files\7-Zip\7z.exe" u -tzip "$(SolutionDir)\obj\Debug\Version.zip" "$(SolutionDir)\Readme.txt" "$(SolutionDir)\obj\Debug\Version.dll" "$(SolutionDir)\Libraries\SharpSvn\SharpSvn.dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>
