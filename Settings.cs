@@ -99,6 +99,20 @@ namespace Version
             }
         }
 
+        [DisplayName("Update version")]
+        [DefaultValue(DEFAULT_GENERATE_PROPERTIES)]
+        public PropertiesGenerationLocations PropertiesGenerationLocation
+        {
+            get { return propertiesGenerationLocation; }
+            set { propertiesGenerationLocation = value; }
+        }
+        public enum PropertiesGenerationLocations
+        {
+            AfterLastPropertyDeclaration = 0,
+            AfterVariableDeclaration = 1,
+            BeforeVariableDeclaration = 2
+        }
+
         private void FireChanged(string setting)
         {
             if (Changed != null)
