@@ -13,11 +13,10 @@ What Version do:
     * Increments build number at compile time if compilation succeed
     * Change class name of version file
 
+
 What Version does NOT do:
 
-    * Update SVN revision, it just reads the entries file to get revision number
     * Compile with the next commit revision number
-
 
 
 Thanks in advance to anyone who tries it out!
@@ -25,12 +24,12 @@ Thanks in advance to anyone who tries it out!
 
 Tested on FlashDevelop versions:
 
-    * 3.0.6 RTM
+    * 3.1.1 RTM
 
 
 Known Bugs/Issues
 
-    * ???
+    * Not updating build when using Flash IDE compilation.
 
 
 Version History
