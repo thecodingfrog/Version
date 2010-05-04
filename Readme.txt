@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.1024 - May 4, 2010
+      + New setting to allow update at testing, build or both
+    
      / 1.0.1023 - April 27, 2010
       * Implementation of SharpSvn instead of homemade trick to read revision
       * Change the maximum value for major, minor and build NumericUpDown controls

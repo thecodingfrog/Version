@@ -9,6 +9,13 @@ using System.Collections.Specialized;
 namespace Version
 {
     public delegate void SettingChangeHandler(string setting);
+    
+    public enum CompilationModes
+    {
+        Both = 0,
+        Build = 1,
+        Test = 2
+    }
 
     [Serializable]
     public class Settings
@@ -18,11 +25,13 @@ namespace Version
         const string DEFAULT_CLASSNAME = "Version";
         const Keys DEFAULT_SHORTCUT = Keys.Control | Keys.Shift | Keys.V;
         const bool DEFAULT_AUTOINCREMENT = true;
+        const CompilationModes DEFAULT_COMPILATIONMODE = 0;
         
         private string __oldClassName = DEFAULT_CLASSNAME;
         private string __className = DEFAULT_CLASSNAME;
         private Keys __versionShortcut = DEFAULT_SHORTCUT;
         private bool __autoIncrement = DEFAULT_AUTOINCREMENT;
+        private CompilationModes __compilationMode = DEFAULT_COMPILATIONMODE;
         private string[] __trackedProjects = new string[] { };
         private string[] __ignoredProjects = new string[] { };
 
@@ -99,18 +108,18 @@ namespace Version
             }
         }
 
-        [DisplayName("Update version")]
-        [DefaultValue(DEFAULT_GENERATE_PROPERTIES)]
-        public PropertiesGenerationLocations PropertiesGenerationLocation
+        /// <summary> 
+        /// Get and sets the ignoredProjects
+        /// </summary>
+        [DisplayName("Action required to update version"), DefaultValue(DEFAULT_COMPILATIONMODE)]
+        public CompilationModes CompilationMode
         {
-            get { return propertiesGenerationLocation; }
-            set { propertiesGenerationLocation = value; }
-        }
-        public enum PropertiesGenerationLocations
-        {
-            AfterLastPropertyDeclaration = 0,
-            AfterVariableDeclaration = 1,
-            BeforeVariableDeclaration = 2
+            get { return this.__compilationMode; }
+            set
+            {
+                this.__compilationMode = value;
+                //FireChanged("compilationMode");
+            }
         }
 
         private void FireChanged(string setting)

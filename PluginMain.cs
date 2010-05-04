@@ -39,6 +39,7 @@ namespace Version
         private String __vAuthor;
         private String __projectPath;
         private String __packagePath;
+        private CompilationModes __lastAction;
 
 	    #region Required Properties
 
@@ -126,30 +127,61 @@ namespace Version
                 // Catches Project change event and display the active project path
                 case EventType.Command:
                     string cmd = (e as DataEvent).Action;
-                    if (cmd == "ProjectManager.Project")
+                    //MessageBox.Show(cmd);
+                    switch (cmd)
                     {
-                        IProject project = PluginBase.CurrentProject;
-                        if (project == null)
-                        {
-                        }
-                        else
-                        {
-                            CheckProject();
-                        }
+                        case "ProjectManager.Project":
+                            IProject project = PluginBase.CurrentProject;
+                            if (project == null)
+                            {
+                                //
+                            }
+                            else
+                            {
+                                CheckProject();
+                            }
+                            break;
+
+                        case "ProjectManager.BuildingProject":
+                            __lastAction = CompilationModes.Build;
+                            break;
+
+                        case "ProjectManager.TestingProject":
+                            __lastAction = CompilationModes.Test;
+                            break;
+
+                        case "ProjectManager.BuildFailed":
+                            //MessageBox.Show("ProjectManager.BuildFailed");
+                            break;
                     }
+                    
                     break;
                 case EventType.ProcessStart:
-                    if (settingObject.AutoIncrement )
+                    //MessageBox.Show("EventType.ProcessStart");
+                    if (settingObject.AutoIncrement
+                            && (settingObject.CompilationMode == CompilationModes.Both
+                                || (settingObject.CompilationMode == CompilationModes.Build && __lastAction == CompilationModes.Build)
+                                || (settingObject.CompilationMode == CompilationModes.Test && __lastAction == CompilationModes.Test)
+                            )
+                        )
                         IncrementVersion();
                     break;
                 case EventType.ProcessEnd:
+                    //MessageBox.Show("EventType.ProcessEnd");
                     string res = (e as TextEvent).Value;
-                    if (res != "Done (0)" && settingObject.AutoIncrement)
+                    if (res != "Done (0)"
+                            && settingObject.AutoIncrement
+                            && (settingObject.CompilationMode == CompilationModes.Both
+                                || (settingObject.CompilationMode == CompilationModes.Build && __lastAction == CompilationModes.Build)
+                                || (settingObject.CompilationMode == CompilationModes.Test && __lastAction == CompilationModes.Test)
+                            )
+                        )
                     {
                         DecrementVersion();
                     }
                     break;
             }
+            
 		}
 
         /// <summary>
