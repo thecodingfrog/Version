@@ -270,15 +270,19 @@ namespace Version
         {
             if (!inTrackList)
             {
-                PathEntryDialog prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]), LocaleHelper.GetString("Info.Package"));
+                PathEntryDialog prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]), LocaleHelper.GetString("Info.Package"));
                 if (prompt.ShowDialog() == DialogResult.OK)
                 {
                     string[] tempTrackedProjects = new string[this.settingObject.TrackedProjects.Length + 1];
                     this.settingObject.TrackedProjects.CopyTo(tempTrackedProjects, 0);
-                    tempTrackedProjects.SetValue(project.Name + ";" + prompt.ProjectPath, this.settingObject.TrackedProjects.Length);
-                    this.settingObject.TrackedProjects = tempTrackedProjects;
-                    __projectPath = prompt.ProjectPath;
+
+                    __projectPath = (prompt.RelativePath) ? PluginBase.CurrentProject.GetAbsolutePath(prompt.ProjectPath) : prompt.ProjectPath;
+                    
                     __packagePath = prompt.PackagePath;
+
+                    tempTrackedProjects.SetValue(project.Name + ";" + __projectPath, this.settingObject.TrackedProjects.Length);
+                    this.settingObject.TrackedProjects = tempTrackedProjects;
+                    
 
                     if (!Directory.Exists(__projectPath))
                     {

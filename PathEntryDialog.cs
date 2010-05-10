@@ -14,6 +14,7 @@ namespace Version.Helpers
 	{
 		string __ProjectPath;
         string __PackagePath;
+        bool __RelativePath = false;
 
 		#region Form Designer Components
 
@@ -26,6 +27,7 @@ namespace Version.Helpers
 		private System.ComponentModel.Container components = null;
         private Label packageLabel;
         private TextBox packageTextBox;
+        private CheckBox checkBox1;
 		private System.Windows.Forms.Label pathLabel;
 
 		#endregion
@@ -46,7 +48,15 @@ namespace Version.Helpers
             get { return __PackagePath; }
         }
 
-        public PathEntryDialog(string captionText, string pathTitle, string defaultPath, string packageTitle)
+        /// <summary>
+        /// Gets the line entered by the user.
+        /// </summary>
+        public bool RelativePath
+        {
+            get { return __RelativePath; }
+        }
+
+        public PathEntryDialog(string captionText, string pathTitle, string relativeTitle, string defaultPath, string packageTitle)
 		{
 			InitializeComponent();
             InititalizeLocalization();
@@ -60,6 +70,8 @@ namespace Version.Helpers
 
             packageLabel.Text = packageTitle;
             packageTextBox.Text = FormatPackage(defaultPath);
+
+            checkBox1.Text = relativeTitle;
 		}
 
 		#region Dispose
@@ -95,6 +107,7 @@ namespace Version.Helpers
             this.btnCancel = new System.Windows.Forms.Button();
             this.packageLabel = new System.Windows.Forms.Label();
             this.packageTextBox = new System.Windows.Forms.TextBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // pathLabel
@@ -149,12 +162,24 @@ namespace Version.Helpers
             this.packageTextBox.Size = new System.Drawing.Size(403, 20);
             this.packageTextBox.TabIndex = 5;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(420, 24);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(80, 17);
+            this.checkBox1.TabIndex = 6;
+            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // PathEntryDialog
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(425, 133);
+            this.ClientSize = new System.Drawing.Size(507, 133);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.packageTextBox);
             this.Controls.Add(this.packageLabel);
             this.Controls.Add(this.btnCancel);
@@ -229,6 +254,15 @@ namespace Version.Helpers
         private void pathTextBox_TextChanged(object sender, EventArgs e)
         {
             packageTextBox.Text = FormatPackage(pathTextBox.Text);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+                __RelativePath = true;
+            else
+                __RelativePath = false;
+
         }
 
     }

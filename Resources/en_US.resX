@@ -129,6 +129,9 @@
   <data name="Info.Path" xml:space="preserve">
     <value>Path</value>
   </data>
+  <data name="Info.Relative" xml:space="preserve">
+    <value>Relative</value>
+  </data>
   <data name="Info.TrackProject" xml:space="preserve">
     <value>Do you want to version the project {0}?</value>
   </data>

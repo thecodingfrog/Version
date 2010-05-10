@@ -97,6 +97,15 @@ namespace Version.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Relative.
+        /// </summary>
+        internal static string Info_Relative {
+            get {
+                return ResourceManager.GetString("Info.Relative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to version the project {0}?.
         /// </summary>
         internal static string Info_TrackProject {
