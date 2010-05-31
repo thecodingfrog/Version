@@ -12,7 +12,9 @@ namespace Version.Helpers
 	/// </summary>
 	public class PathEntryDialog : System.Windows.Forms.Form
 	{
-		string __ProjectPath;
+        string __AbsoluteProjectPath;
+        string __RelativeProjectPath = "";
+        string __ProjectPath;
         string __PackagePath;
         bool __RelativePath = false;
 
@@ -64,6 +66,7 @@ namespace Version.Helpers
 
 			this.Text = " " + captionText;
             pathLabel.Text = pathTitle;
+            __AbsoluteProjectPath = defaultPath;
             pathTextBox.Text = (defaultPath != null) ? defaultPath : string.Empty;
 			pathTextBox.SelectAll();
 			pathTextBox.Focus();
@@ -253,15 +256,29 @@ namespace Version.Helpers
 
         private void pathTextBox_TextChanged(object sender, EventArgs e)
         {
+            if (checkBox1.Checked)
+            {
+                __RelativeProjectPath = pathTextBox.Text;
+            }
+            else
+            {
+                __AbsoluteProjectPath = pathTextBox.Text;
+            }
             packageTextBox.Text = FormatPackage(pathTextBox.Text);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
+            {
+                pathTextBox.Text = __RelativeProjectPath;
                 __RelativePath = true;
+            }
             else
+            {
+                pathTextBox.Text = __AbsoluteProjectPath;
                 __RelativePath = false;
+            }
 
         }
 

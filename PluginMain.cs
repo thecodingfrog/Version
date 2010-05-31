@@ -28,6 +28,7 @@ namespace Version
         private String pluginDesc = "Version number plugin for FlashDevelop 3";
         private String pluginAuth = "Jean-Louis PERSAT";
         private String settingFilename;
+        private String settingBackup;
         private Settings settingObject;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
@@ -217,6 +218,7 @@ namespace Version
                 //pluginUI.Debug.Text += "project: " + __ignoredProjectName.Split(splitchar)[0] + "\n";
                 if (__ignoredProjectName.Split(splitchar)[0] == project.Name)
                 {
+                    pluginUI.disableVersion();
                     return;
                 }
             }
@@ -227,6 +229,7 @@ namespace Version
             {
                 if (__trackedProject.Split(splitchar)[0] == project.Name)
                 {
+                    pluginUI.enableVersion();
                     inTrackList = true;
                     __projectPath = __trackedProject.Split(splitchar)[1];
                     break;
@@ -236,15 +239,18 @@ namespace Version
             {
                 if (MessageBox.Show(String.Format(LocaleHelper.GetString("Info.TrackProject"), project.Name), LocaleHelper.GetString("Title.UnTrackedProject"), MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
+                    pluginUI.enableVersion();
                     trackProject(project, inTrackList);
                 }
                 else
                 {
+                    pluginUI.disableVersion();
                     ignoreProject(project);
                 }
             }
             else
             {
+                pluginUI.enableVersion();
                 trackProject(project, inTrackList);
             }
         }
@@ -409,6 +415,7 @@ namespace Version
             String dataPath = Path.Combine(PathHelper.DataDir, "Version");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            this.settingBackup = Path.Combine(dataPath, "Settings.bak");
             this.pluginImage = PluginBase.MainForm.FindImage("100");
         }
 
@@ -466,10 +473,11 @@ namespace Version
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
             else
             {
+                File.Copy(this.settingFilename, this.settingBackup, true);
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (Settings)obj;
             }
-            //this.settingObject.Changed += SettingObjectChanged;
+            this.settingObject.Changed += SettingObjectChanged;
         }
 
         /// <summary>
@@ -477,8 +485,8 @@ namespace Version
         /// </summary>
         public void SaveSettings()
         {
+            this.settingObject.Changed -= SettingObjectChanged;
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-            //this.settingObject.Changed -= SettingObjectChanged;
             //pluginUI.Changed -= VersionChanged;
         }
 
@@ -512,6 +520,7 @@ namespace Version
         private void SettingObjectChanged(string setting)
         {
             //
+            CheckProject();
         }
 
         /// <summary>
@@ -579,21 +588,29 @@ namespace Version
             SvnClient __svnClient = new SvnClient();
             SvnInfoEventArgs __sieaInfo;
             bool __getInfo;
-            try
+            if (__projectPath != "")
             {
-                __getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath), out __sieaInfo);
-                pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
-                __vRevision = (int)__sieaInfo.LastChangeRevision;
+                try
+                {
+                    __getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath), out __sieaInfo);
+                    pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
+                    __vRevision = (int)__sieaInfo.LastChangeRevision;
+                }
+                catch (SvnException e)
+                {
+                    __vRevision = 0;
+                    pluginUI.Revision.Text = "";
+                }
+                /*catch (SvnClientException e)
+                {
+                    //
+                }*/
             }
-            catch (SvnClientException e)
-            {
-                //
-            }
-            catch (SvnWorkingCopyException e)
+            else
             {
                 __vRevision = 0;
                 pluginUI.Revision.Text = "";
-            }   
+            }
         }
 
 		#endregion

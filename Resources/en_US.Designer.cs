@@ -124,6 +124,15 @@ namespace Version.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Project not tracked.
+        /// </summary>
+        internal static string Title_NotTracked {
+            get {
+                return ResourceManager.GetString("Title.NotTracked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Version.
         /// </summary>
         internal static string Title_PluginPanel {

@@ -34,6 +34,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.1052 - May 31, 2010
+      + Plugin UI updated for tracked/untracked projects
+
      / 1.0.1037 - May 10, 2010
       + Relative now allowed when project added to tracked projects
     

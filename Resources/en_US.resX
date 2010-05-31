@@ -138,6 +138,9 @@
   <data name="Label.ViewMenuItem" xml:space="preserve">
     <value>&amp;Version</value>
   </data>
+  <data name="Title.NotTracked" xml:space="preserve">
+    <value>Project not tracked</value>
+  </data>
   <data name="Title.PluginPanel" xml:space="preserve">
     <value>Version</value>
   </data>

@@ -32,6 +32,7 @@ namespace Version
         private Label label1;
         private NumericUpDown vBuild;
         private Button buttonSVNCheck;
+        private Label NotTracked;
         private RichTextBox tbDebug;
 
         /// <summary>
@@ -61,7 +62,22 @@ namespace Version
             }
 
             this.buttonSVNCheck.Text = LocaleHelper.GetString("Title.SVNCheckButton");
+            this.NotTracked.Text = LocaleHelper.GetString("Title.NotTracked");
 		}
+
+        public void enableVersion()
+        {
+            this.NotTracked.Visible = false;
+            this.buttonSVNCheck.Visible = true;
+            this.groupBox1.Visible = true;
+        }
+
+        public void disableVersion()
+        {
+            this.NotTracked.Visible = true;
+            this.buttonSVNCheck.Visible = false;
+            this.groupBox1.Visible = false;
+        }
 
         /// <summary>
         /// Accessor to the RichTextBox
@@ -151,6 +167,7 @@ namespace Version
 		private void InitializeComponent() 
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.NotTracked = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.vRevision = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -183,6 +200,17 @@ namespace Version
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Version of ...";
+            // 
+            // NotTracked
+            // 
+            this.NotTracked.BackColor = System.Drawing.SystemColors.Control;
+            this.NotTracked.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NotTracked.Location = new System.Drawing.Point(0, 0);
+            this.NotTracked.Name = "NotTracked";
+            this.NotTracked.Size = new System.Drawing.Size(267, 120);
+            this.NotTracked.TabIndex = 10;
+            this.NotTracked.Text = "Not tracked";
+            this.NotTracked.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
             // 
@@ -315,6 +343,7 @@ namespace Version
             this.Controls.Add(this.buttonSVNCheck);
             this.Controls.Add(this.tbDebug);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.NotTracked);
             this.Name = "PluginUI";
             this.Size = new System.Drawing.Size(267, 120);
             this.groupBox1.ResumeLayout(false);
