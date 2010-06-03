@@ -32,7 +32,7 @@ namespace Version
         private Label label1;
         private NumericUpDown vBuild;
         private Button buttonSVNCheck;
-        private Label NotTracked;
+        private LinkLabel NotTracked;
         private RichTextBox tbDebug;
 
         /// <summary>
@@ -62,7 +62,10 @@ namespace Version
             }
 
             this.buttonSVNCheck.Text = LocaleHelper.GetString("Title.SVNCheckButton");
-            this.NotTracked.Text = LocaleHelper.GetString("Title.NotTracked");
+            this.NotTracked.Text = LocaleHelper.GetString("Title.NotTracked") + "\n" +
+                    LocaleHelper.GetString("Title.TrackIt");
+            this.NotTracked.LinkArea = new LinkArea(LocaleHelper.GetString("Title.NotTracked").Length + 1, LocaleHelper.GetString("Title.TrackIt").Length);
+            this.NotTracked.LinkClicked += new LinkLabelLinkClickedEventHandler(this.NotTracked_LinkClicked);
 		}
 
         public void enableVersion()
@@ -167,7 +170,6 @@ namespace Version
 		private void InitializeComponent() 
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.NotTracked = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.vRevision = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -176,6 +178,7 @@ namespace Version
             this.vMinor = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.vBuild = new System.Windows.Forms.NumericUpDown();
+            this.NotTracked = new System.Windows.Forms.LinkLabel();
             this.tbDebug = new System.Windows.Forms.RichTextBox();
             this.buttonSVNCheck = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -200,17 +203,6 @@ namespace Version
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Version of ...";
-            // 
-            // NotTracked
-            // 
-            this.NotTracked.BackColor = System.Drawing.SystemColors.Control;
-            this.NotTracked.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NotTracked.Location = new System.Drawing.Point(0, 0);
-            this.NotTracked.Name = "NotTracked";
-            this.NotTracked.Size = new System.Drawing.Size(267, 120);
-            this.NotTracked.TabIndex = 10;
-            this.NotTracked.Text = "Not tracked";
-            this.NotTracked.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
             // 
@@ -317,6 +309,20 @@ namespace Version
             this.vBuild.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.vBuild.ValueChanged += new System.EventHandler(this.vBuild_ValueChanged);
             this.vBuild.Click += new System.EventHandler(this.vBuild_Click);
+            // 
+            // NotTracked
+            // 
+            this.NotTracked.BackColor = System.Drawing.SystemColors.Control;
+            this.NotTracked.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NotTracked.LinkArea = new System.Windows.Forms.LinkArea(13, 8);
+            this.NotTracked.Location = new System.Drawing.Point(0, 0);
+            this.NotTracked.Name = "NotTracked";
+            this.NotTracked.Size = new System.Drawing.Size(267, 120);
+            this.NotTracked.TabIndex = 10;
+            this.NotTracked.TabStop = true;
+            this.NotTracked.Text = "Not tracked\r\nTrack it";
+            this.NotTracked.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.NotTracked.UseCompatibleTextRendering = true;
             // 
             // tbDebug
             // 
@@ -458,7 +464,12 @@ namespace Version
             if (SVNCheck != null)
                 SVNCheck();
         }
-				
+
+        private void NotTracked_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+        {
+            FireChanged("TrackIt");
+        }
+
  	}
 
 }

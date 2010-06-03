@@ -150,6 +150,9 @@
   <data name="Title.SVNCheckButton" xml:space="preserve">
     <value>Get SVN revision (no update)</value>
   </data>
+  <data name="Title.TrackIt" xml:space="preserve">
+    <value>Track it</value>
+  </data>
   <data name="Title.UnTrackedProject" xml:space="preserve">
     <value>Unversioned project</value>
   </data>

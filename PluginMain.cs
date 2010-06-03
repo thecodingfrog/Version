@@ -239,18 +239,15 @@ namespace Version
             {
                 if (MessageBox.Show(String.Format(LocaleHelper.GetString("Info.TrackProject"), project.Name), LocaleHelper.GetString("Title.UnTrackedProject"), MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    pluginUI.enableVersion();
                     trackProject(project, inTrackList);
                 }
                 else
                 {
-                    pluginUI.disableVersion();
                     ignoreProject(project);
                 }
             }
             else
             {
-                pluginUI.enableVersion();
                 trackProject(project, inTrackList);
             }
         }
@@ -261,6 +258,7 @@ namespace Version
         /// <param name="project">The project.</param>
         private void ignoreProject(IProject project)
         {
+            pluginUI.disableVersion();
             string[] tempIgnoredProjects = new string[this.settingObject.IgnoredProjects.Length + 1];
             this.settingObject.IgnoredProjects.CopyTo(tempIgnoredProjects, 0);
             tempIgnoredProjects.SetValue(project.Name, this.settingObject.IgnoredProjects.Length);
@@ -274,6 +272,7 @@ namespace Version
         /// <param name="inTrackList">if set to <c>true</c> [in track list].</param>
         private void trackProject(IProject project, bool inTrackList)
         {
+            pluginUI.enableVersion();
             if (!inTrackList)
             {
                 PathEntryDialog prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]), LocaleHelper.GetString("Info.Package"));
@@ -297,7 +296,26 @@ namespace Version
                 }
             }
             CheckVersionFile();
-            this.pluginUI.Changed += VersionChanged;
+            //this.pluginUI.Changed += VersionChanged;
+        }
+
+        private void removeIgnoredProject(IProject __project)
+        {
+            char[] __splitchar = { ';' };
+            string[] __tempIgnoredProjects = new string[this.settingObject.IgnoredProjects.Length];
+            string[] __ignoredProjects = this.settingObject.IgnoredProjects;
+            int count = 0;
+            for (int i = 0; i < this.settingObject.IgnoredProjects.Length; i++)
+            {
+                if (__ignoredProjects[i].Split(__splitchar)[0] != __project.Name)
+                {
+                    __tempIgnoredProjects[i] = __ignoredProjects[i];
+                    count++;
+                }
+            }
+            if (count == 0)
+               __tempIgnoredProjects = null;
+            this.settingObject.IgnoredProjects = __tempIgnoredProjects;
         }
 
         /// <summary>
@@ -462,6 +480,7 @@ namespace Version
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = LocaleHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockRight);
+            this.pluginUI.Changed += VersionChanged; 
         }
 
         /// <summary>
@@ -486,8 +505,8 @@ namespace Version
         public void SaveSettings()
         {
             this.settingObject.Changed -= SettingObjectChanged;
+            this.pluginUI.Changed -= VersionChanged;
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-            //pluginUI.Changed -= VersionChanged;
         }
 
         /// <summary>
@@ -528,54 +547,67 @@ namespace Version
         /// </summary>
         private void VersionChanged(string type)
         {
-            pluginUI.Debug.Text += "Updating " + settingObject.ClassName + ".as\n";
-
-            Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
-
-            __vMajor = pluginUI.Major;
-            __vMinor = pluginUI.Minor;
-            __vBuild = pluginUI.Build;
-
-            if (File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
+            switch (type)
             {
-                String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-                RegexOptions options = new RegexOptions();
-                options |= RegexOptions.Multiline;
-                options |= RegexOptions.IgnoreCase;
+                case "TrackIt":
+                    //MessageBox.Show("here");
+                    IProject __project = PluginBase.CurrentProject;
+                    this.settingObject.Changed -= SettingObjectChanged; 
+                    removeIgnoredProject(__project);
+                    trackProject(__project, false);
+                    this.settingObject.Changed += SettingObjectChanged;
+                    break;
+                default:
+                    pluginUI.Debug.Text += "Updating " + settingObject.ClassName + ".as\n";
 
-                sVersionContent = Regex.Replace(sVersionContent, @"static public const Major:int = (\d+);", "static public const Major:int = " + __vMajor + ";", options);
-                sVersionContent = Regex.Replace(sVersionContent, @"static public const Minor:int = (\d+);", "static public const Minor:int = " + __vMinor + ";", options);
-                sVersionContent = Regex.Replace(sVersionContent, @"static public const Build:int = (\d+);", "static public const Build:int = " + __vBuild + ";", options);
-                sVersionContent = Regex.Replace(sVersionContent, @"static public const Revision:int = (\d+);", "static public const Revision:int = " + __vRevision + ";", options);
+                    Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
 
-                String pattern = @"static public const Timestamp:String = ""(.*)"";";
-                sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Timestamp:String = \"" + DateTime.Now + "\";", options);
+                    __vMajor = pluginUI.Major;
+                    __vMinor = pluginUI.Minor;
+                    __vBuild = pluginUI.Build;
 
-                pattern = @"static public const Author:String = ""(\.*|\w*)"";";
-                sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Author:String = \"" + __vAuthor + "\";", options);
-
-                FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-            }
-
-            string __projectBaseDir = PluginBase.CurrentProject.ProjectPath;
-            if (__projectBaseDir.IndexOf("\\") > -1)
-            {
-                __projectBaseDir = __projectBaseDir.Substring(0, __projectBaseDir.LastIndexOf("\\") + 1);
-                if (File.Exists(__projectBaseDir + "\\application.xml"))
-                {
-                    XmlDocument __xmlDoc = new XmlDocument();
-                    __xmlDoc.Load(__projectBaseDir + "\\application.xml");
-                    XmlNamespaceManager __NsMgr = new XmlNamespaceManager(__xmlDoc.NameTable);
-                    __NsMgr.AddNamespace("air", "http://ns.adobe.com/air/application/1.5");
-
-                    XmlNode __root = __xmlDoc.DocumentElement;
-                    XmlNode __nodeVersion = __root.SelectSingleNode("/air:application/air:version", __NsMgr);
-                    if (__nodeVersion != null)
+                    if (File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
                     {
-                        __nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __vBuild;
+                        String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
+                        RegexOptions options = new RegexOptions();
+                        options |= RegexOptions.Multiline;
+                        options |= RegexOptions.IgnoreCase;
+
+                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Major:int = (\d+);", "static public const Major:int = " + __vMajor + ";", options);
+                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Minor:int = (\d+);", "static public const Minor:int = " + __vMinor + ";", options);
+                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Build:int = (\d+);", "static public const Build:int = " + __vBuild + ";", options);
+                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Revision:int = (\d+);", "static public const Revision:int = " + __vRevision + ";", options);
+
+                        String pattern = @"static public const Timestamp:String = ""(.*)"";";
+                        sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Timestamp:String = \"" + DateTime.Now + "\";", options);
+
+                        pattern = @"static public const Author:String = ""(\.*|\w*)"";";
+                        sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Author:String = \"" + __vAuthor + "\";", options);
+
+                        FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
                     }
-                    __xmlDoc.Save(__projectBaseDir + "\\application.xml");
-                }
+
+                    string __projectBaseDir = PluginBase.CurrentProject.ProjectPath;
+                    if (__projectBaseDir.IndexOf("\\") > -1)
+                    {
+                        __projectBaseDir = __projectBaseDir.Substring(0, __projectBaseDir.LastIndexOf("\\") + 1);
+                        if (File.Exists(__projectBaseDir + "\\application.xml"))
+                        {
+                            XmlDocument __xmlDoc = new XmlDocument();
+                            __xmlDoc.Load(__projectBaseDir + "\\application.xml");
+                            XmlNamespaceManager __NsMgr = new XmlNamespaceManager(__xmlDoc.NameTable);
+                            __NsMgr.AddNamespace("air", "http://ns.adobe.com/air/application/1.5");
+
+                            XmlNode __root = __xmlDoc.DocumentElement;
+                            XmlNode __nodeVersion = __root.SelectSingleNode("/air:application/air:version", __NsMgr);
+                            if (__nodeVersion != null)
+                            {
+                                __nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __vBuild;
+                            }
+                            __xmlDoc.Save(__projectBaseDir + "\\application.xml");
+                        }
+                    }
+                    break;
             }
 
         }

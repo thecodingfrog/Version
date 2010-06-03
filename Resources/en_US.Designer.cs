@@ -160,6 +160,15 @@ namespace Version.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Track it.
+        /// </summary>
+        internal static string Title_TrackIt {
+            get {
+                return ResourceManager.GetString("Title.TrackIt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unversioned project.
         /// </summary>
         internal static string Title_UnTrackedProject {
