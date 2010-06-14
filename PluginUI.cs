@@ -66,6 +66,8 @@ namespace Version
                     LocaleHelper.GetString("Title.TrackIt");
             this.NotTracked.LinkArea = new LinkArea(LocaleHelper.GetString("Title.NotTracked").Length + 1, LocaleHelper.GetString("Title.TrackIt").Length);
             this.NotTracked.LinkClicked += new LinkLabelLinkClickedEventHandler(this.NotTracked_LinkClicked);
+
+            disableVersion();
 		}
 
         public void enableVersion()

@@ -209,10 +209,13 @@ namespace Version
         private void CheckProject()
         {
             IProject project = PluginBase.CurrentProject;
-
+            
             pluginUI.Frame.Text = String.Format(LocaleHelper.GetString("Info.CurrentVersion"), project.Name);
-
+            
             char[] splitchar = { ';' };
+
+            checkConsistency();
+
             foreach (string __ignoredProjectName in this.settingObject.IgnoredProjects)
             {
                 //pluginUI.Debug.Text += "project: " + __ignoredProjectName.Split(splitchar)[0] + "\n";
@@ -222,7 +225,7 @@ namespace Version
                     return;
                 }
             }
-
+            
             bool inTrackList = false;
 
             foreach (string __trackedProject in this.settingObject.TrackedProjects)
@@ -235,6 +238,7 @@ namespace Version
                     break;
                 }
             }
+            
             if (!inTrackList)
             {
                 if (MessageBox.Show(String.Format(LocaleHelper.GetString("Info.TrackProject"), project.Name), LocaleHelper.GetString("Title.UnTrackedProject"), MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -250,6 +254,47 @@ namespace Version
             {
                 trackProject(project, inTrackList);
             }
+        }
+
+        private void checkConsistency()
+        {
+            int __size = this.settingObject.IgnoredProjects.Length;
+            string[] __tempArray = new string[0];
+            int count = 0;
+
+            for (int i = 0; i < __size; i++)
+            {
+                if (this.settingObject.IgnoredProjects[i] != string.Empty)
+                {
+                    count++;
+                    Array.Resize<string>(ref __tempArray, count);
+                    __tempArray.SetValue(this.settingObject.IgnoredProjects[i], count - 1);
+                }
+            }
+
+            this.settingObject.Changed -= SettingObjectChanged;
+            this.settingObject.IgnoredProjects = new string[__tempArray.Length];
+            __tempArray.CopyTo(this.settingObject.IgnoredProjects, 0);
+            this.settingObject.Changed += SettingObjectChanged;
+
+            __size = this.settingObject.TrackedProjects.Length;
+            __tempArray = new string[0];
+            count = 0;
+
+            for (int i = 0; i < __size; i++)
+            {
+                if (this.settingObject.TrackedProjects[i] != string.Empty)
+                {
+                    count++;
+                    Array.Resize<string>(ref __tempArray, count);
+                    __tempArray.SetValue(this.settingObject.TrackedProjects[i], count - 1);
+                }
+            }
+
+            this.settingObject.Changed -= SettingObjectChanged;
+            this.settingObject.TrackedProjects = new string[__tempArray.Length];
+            __tempArray.CopyTo(this.settingObject.TrackedProjects, 0);
+            this.settingObject.Changed += SettingObjectChanged;
         }
 
         /// <summary>
@@ -296,13 +341,12 @@ namespace Version
                 }
             }
             CheckVersionFile();
-            //this.pluginUI.Changed += VersionChanged;
         }
 
         private void removeIgnoredProject(IProject __project)
         {
             char[] __splitchar = { ';' };
-            string[] __tempIgnoredProjects = new string[this.settingObject.IgnoredProjects.Length];
+            string[] __tempIgnoredProjects = new string[this.settingObject.IgnoredProjects.Length - 1];
             string[] __ignoredProjects = this.settingObject.IgnoredProjects;
             int count = 0;
             for (int i = 0; i < this.settingObject.IgnoredProjects.Length; i++)

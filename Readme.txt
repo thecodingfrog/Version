@@ -24,7 +24,7 @@ Thanks in advance to anyone who tries it out!
 
 Tested on FlashDevelop versions:
 
-    * 3.1.1 RTM
+    * 3.2.1 RTM
 
 
 Known Bugs/Issues
@@ -34,20 +34,23 @@ Known Bugs/Issues
 
 Version History
 
-     / 1.0.1088 - June 3, 2010
+     / 1.0.252 - June 14, 2010
+      + Check consistency of ignored projects and tracked projetcs lists
+      
+     / 1.0.188 - June 3, 2010
       + Link in panel to track project
 
-     / 1.0.1037 - May 10, 2010
+     / 1.0.137 - May 10, 2010
       + Relative now allowed when project added to tracked projects
     
-     / 1.0.1024 - May 4, 2010
+     / 1.0.124 - May 4, 2010
       + New setting to allow update at testing, build or both
     
-     / 1.0.1023 - April 27, 2010
+     / 1.0.123 - April 27, 2010
       * Implementation of SharpSvn instead of homemade trick to read revision
       * Change the maximum value for major, minor and build NumericUpDown controls
     
-     / 1.0.1012 - April 26, 2010
+     / 1.0.112 - April 26, 2010
       * Version file is now encoded using default encoding
       + New feature to support AIR application.xml file update
     
