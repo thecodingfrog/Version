@@ -424,9 +424,11 @@ namespace Version
                 __vMinor = decimal.Parse(getValue(sVersionContent, @"static public const Minor:int = (\d+);"));
                 __vBuild = decimal.Parse(getValue(sVersionContent, @"static public const Build:int = (\d+);"));
             }
-            pluginUI.Major = __vMajor;
-            pluginUI.Minor = __vMinor;
-            pluginUI.Build = __vBuild;
+            this.pluginUI.Changed -= VersionChanged;
+            this.pluginUI.Major = __vMajor;
+            this.pluginUI.Minor = __vMinor;
+            this.pluginUI.Build = __vBuild;
+            this.pluginUI.Changed += VersionChanged;
         }
 
         /// <summary>
