@@ -204,6 +204,25 @@ namespace Version
         }
 
         /// <summary>
+        /// Find the version file if exists.
+        /// </summary>
+        private string FindVersionFile(string __path)
+        {
+            string[] __filePaths;
+            string __foundPath = string.Empty;
+            
+            //MessageBox.Show(__path);
+
+			__filePaths = Directory.GetFiles(__path, settingObject.ClassName + ".as", SearchOption.AllDirectories);
+            foreach (string __item in __filePaths)
+            {
+				//MessageBox.Show(__item);
+                __foundPath = __item;
+            }
+            return __foundPath;
+        }
+
+        /// <summary>
         /// Checks the project.
         /// </summary>
         private void CheckProject()
@@ -238,16 +257,28 @@ namespace Version
                     break;
                 }
             }
+			
+			//MessageBox.Show(inTrackList.ToString());
             
             if (!inTrackList)
             {
-                if (MessageBox.Show(String.Format(LocaleHelper.GetString("Info.TrackProject"), project.Name), LocaleHelper.GetString("Title.UnTrackedProject"), MessageBoxButtons.YesNo) == DialogResult.Yes)
+
+                string __foundVersionFilePath = FindVersionFile(GetPath());
+                if (__foundVersionFilePath != string.Empty)
                 {
-                    trackProject(project, inTrackList);
+                    //MessageBox.Show(GetPath(__foundVersionFilePath));
+					trackProject(GetPath(__foundVersionFilePath));
                 }
                 else
                 {
-                    ignoreProject(project);
+                    if (MessageBox.Show(String.Format(LocaleHelper.GetString("Info.TrackProject"), project.Name), LocaleHelper.GetString("Title.UnTrackedProject"), MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        trackProject(project, inTrackList);
+                    }
+                    else
+                    {
+                        ignoreProject(project);
+                    }
                 }
             }
             else
@@ -315,17 +346,41 @@ namespace Version
         /// </summary>
         /// <param name="project">The project.</param>
         /// <param name="inTrackList">if set to <c>true</c> [in track list].</param>
+        private void trackProject(string __path)
+        {
+            pluginUI.enableVersion();
+
+            string[] tempTrackedProjects = new string[this.settingObject.TrackedProjects.Length + 1];
+            this.settingObject.TrackedProjects.CopyTo(tempTrackedProjects, 0);
+			tempTrackedProjects.SetValue(PluginBase.CurrentProject.Name + ";" + __path, this.settingObject.TrackedProjects.Length);
+            this.settingObject.TrackedProjects = tempTrackedProjects;
+			CheckVersionFile();
+        }
+
         private void trackProject(IProject project, bool inTrackList)
         {
             pluginUI.enableVersion();
+                    
             if (!inTrackList)
             {
-                PathEntryDialog prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]), LocaleHelper.GetString("Info.Package"));
+                PathEntryDialog prompt;
+                if (PluginBase.CurrentProject.SourcePaths.Length > 0)
+                {
+                    prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]), LocaleHelper.GetString("Info.Package"));
+                }
+                else
+                {
+                    //MessageBox.Show(PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.ProjectPath).ToString());
+                    int __pos = PluginBase.CurrentProject.ProjectPath.LastIndexOf("\\");
+                    string __path = PluginBase.CurrentProject.ProjectPath.Substring(0, __pos + 1);
+                    //MessageBox.Show(__path);
+                    prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), __path, LocaleHelper.GetString("Info.Package"));
+                }
                 if (prompt.ShowDialog() == DialogResult.OK)
                 {
                     string[] tempTrackedProjects = new string[this.settingObject.TrackedProjects.Length + 1];
                     this.settingObject.TrackedProjects.CopyTo(tempTrackedProjects, 0);
-
+                    
                     __projectPath = (prompt.RelativePath) ? PluginBase.CurrentProject.GetAbsolutePath(prompt.ProjectPath) : prompt.ProjectPath;
                     
                     __packagePath = prompt.PackagePath;
@@ -333,7 +388,6 @@ namespace Version
                     tempTrackedProjects.SetValue(project.Name + ";" + __projectPath, this.settingObject.TrackedProjects.Length);
                     this.settingObject.TrackedProjects = tempTrackedProjects;
                     
-
                     if (!Directory.Exists(__projectPath))
                     {
                         Directory.CreateDirectory(__projectPath);
@@ -689,6 +743,18 @@ namespace Version
                 __vRevision = 0;
                 pluginUI.Revision.Text = "";
             }
+        }
+
+        private string GetPath()
+        {
+            return GetPath(PluginBase.CurrentProject.ProjectPath);
+        }
+
+        private string GetPath(string __path)
+        {
+            int __pos = __path.LastIndexOf("\\");
+            string __realpath = __path.Substring(0, __pos + 1);
+            return __realpath;
         }
 
 		#endregion

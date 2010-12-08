@@ -237,21 +237,51 @@ namespace Version.Helpers
 
         private String FormatPackage(String __path)
         {
-            if (__path.Length > PluginCore.PluginBase.CurrentProject.GetAbsolutePath(PluginCore.PluginBase.CurrentProject.SourcePaths[0]).Length)
+            string __refpath;
+            string __newpath;
+            if (PluginCore.PluginBase.CurrentProject.SourcePaths.Length > 0)
             {
-                __path = __path.Substring(PluginCore.PluginBase.CurrentProject.GetAbsolutePath(PluginCore.PluginBase.CurrentProject.SourcePaths[0]).Length);
-                if (__path.Substring(0, 1) == "\\" || __path.Substring(0, 1) == "/")
-                    __path = __path.Substring(1);
-                __path = __path.Replace("\\", ".");
-                __path = __path.Replace("/", ".");
+                __refpath = PluginCore.PluginBase.CurrentProject.GetAbsolutePath(PluginCore.PluginBase.CurrentProject.SourcePaths[0]);
+                if (__path.Length > __refpath.Length)
+                {
+                    __newpath = __path.Substring(__refpath.Length);
+                }
+                else
+                {
+                    __newpath = "";
+                }              
             }
             else
             {
-                __path = String.Empty;
+                __refpath = PluginCore.PluginBase.CurrentProject.ProjectPath;
+                int __pos = PluginCore.PluginBase.CurrentProject.ProjectPath.LastIndexOf("\\");
+                __refpath = PluginCore.PluginBase.CurrentProject.ProjectPath.Substring(0, __pos + 1);
+
+                //MessageBox.Show(__path + ":" + __refpath + "\n" + __path.Length + " > " + __refpath.Length); 
+                if (__path.Length > __refpath.Length)
+                {
+                    __newpath = __path.Substring(__refpath.Length);
+                }
+                else
+                {
+                    __newpath = "";
+                }
+            }
+            //MessageBox.Show(__newpath);
+            if (__newpath != "")
+            {
+                if (__newpath.Substring(0, 1) == "\\" || __newpath.Substring(0, 1) == "/")
+                    __newpath = __newpath.Substring(1);
+                __newpath = __newpath.Replace("\\", ".");
+                __newpath = __newpath.Replace("/", ".");
+            }
+            else
+            {
+                __newpath = String.Empty;
             }
 
-            
-            return __path;
+
+            return __newpath;
         }
 
         private void pathTextBox_TextChanged(object sender, EventArgs e)

@@ -24,16 +24,23 @@ Thanks in advance to anyone who tries it out!
 
 Tested on FlashDevelop versions:
 
-    * 3.2.1 RTM
+    * 3.3.2 RTM
 
 
 Known Bugs/Issues
 
     * Not updating build when using Flash IDE compilation.
+    * fuck ups with package path when tracking new project
 
 
 Version History
 
+     / 1.0.269 - December 8, 2010
+      + automatic version file discovery and add to tracked project
+      
+     / 1.0.254 - June 25, 2010
+      * major fuckup fixed : version was lost when checking existing version file
+      
      / 1.0.252 - June 14, 2010
       + Check consistency of ignored projects and tracked projetcs lists
       

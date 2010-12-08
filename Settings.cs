@@ -90,7 +90,7 @@ namespace Version
             set
             {
                 this.__ignoredProjects = value;
-                FireChanged("ignoredProjects");
+                //FireChanged("ignoredProjects");
             }
         }
 

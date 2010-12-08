@@ -110,12 +110,11 @@
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="False" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) R:\JLP
-copy $(SolutionDir)\Readme.txt $(SolutionDir)\obj\Debug\Readme.txt 
-"C:\Program Files\7-Zip\7z.exe" u -tzip "$(SolutionDir)\obj\Debug\Version.zip" "$(SolutionDir)\Readme.txt" "$(SolutionDir)\obj\Debug\Version.dll" "$(SolutionDir)\Libraries\SharpSvn\SharpSvn.dll"</PostBuildEvent>
+    <PostBuildEvent>COPY $(TargetPath) "C:\Program Files (x86)\FlashDevelop\Plugins"
+"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)Version.zip $(TargetPath) $(projectDir)Readme.txt $(projectDir)SharpSvn.dll</PostBuildEvent>
   </PropertyGroup>
 </Project>
