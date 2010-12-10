@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.283 - December 10, 2010
+      * Bug while plugin is loading for the first time is now fixed
+      
      / 1.0.269 - December 8, 2010
       + automatic version file discovery and add to tracked project
       

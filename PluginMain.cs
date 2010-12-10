@@ -589,13 +589,16 @@ namespace Version
         public void LoadSettings()
         {
             this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                File.Copy(this.settingFilename, this.settingBackup, true);
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+			if (!File.Exists(this.settingFilename))
+			{
+				this.SaveSettings();
+			}
+			else
+			{
+				File.Copy(this.settingFilename, this.settingBackup, true);
+				Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
+				this.settingObject = (Settings)obj;
+			}
             this.settingObject.Changed += SettingObjectChanged;
         }
 
@@ -604,9 +607,12 @@ namespace Version
         /// </summary>
         public void SaveSettings()
         {
-            this.settingObject.Changed -= SettingObjectChanged;
-            this.pluginUI.Changed -= VersionChanged;
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+			if (this.settingObject != null)
+				this.settingObject.Changed -= SettingObjectChanged;
+			if (this.pluginUI != null)
+				this.pluginUI.Changed -= VersionChanged;
+			
+			ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
         /// <summary>
