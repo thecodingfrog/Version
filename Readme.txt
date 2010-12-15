@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.284 - December 15, 2010
+      * SVN Rev number is now taken from the revision of the version file
+
      / 1.0.283 - December 10, 2010
       * Bug while plugin is loading for the first time is now fixed
       

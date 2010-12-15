@@ -730,7 +730,7 @@ namespace Version
             {
                 try
                 {
-                    __getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath), out __sieaInfo);
+					__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath + "\\" + settingObject.ClassName + ".as"), out __sieaInfo);
                     pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
                     __vRevision = (int)__sieaInfo.LastChangeRevision;
                 }
