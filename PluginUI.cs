@@ -33,6 +33,7 @@ namespace Version
         private NumericUpDown vBuild;
         private Button buttonSVNCheck;
         private LinkLabel NotTracked;
+		public LinkLabel CheckVersion;
         private RichTextBox tbDebug;
 
         /// <summary>
@@ -171,195 +172,210 @@ namespace Version
 		/// </summary>
 		private void InitializeComponent() 
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.vRevision = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.vMajor = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
-            this.vMinor = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.vBuild = new System.Windows.Forms.NumericUpDown();
-            this.NotTracked = new System.Windows.Forms.LinkLabel();
-            this.tbDebug = new System.Windows.Forms.RichTextBox();
-            this.buttonSVNCheck = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.vMajor)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.vMinor)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.vBuild)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.vRevision);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.vMajor);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.vMinor);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.vBuild);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(243, 60);
-            this.groupBox1.TabIndex = 4;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Version of ...";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.ForeColor = System.Drawing.Color.Gray;
-            this.label4.Location = new System.Drawing.Point(165, 14);
-            this.label4.Margin = new System.Windows.Forms.Padding(0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(48, 13);
-            this.label4.TabIndex = 20;
-            this.label4.Text = "Revision";
-            // 
-            // vRevision
-            // 
-            this.vRevision.Location = new System.Drawing.Point(168, 30);
-            this.vRevision.Name = "vRevision";
-            this.vRevision.ReadOnly = true;
-            this.vRevision.Size = new System.Drawing.Size(66, 20);
-            this.vRevision.TabIndex = 16;
-            this.vRevision.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.ForeColor = System.Drawing.Color.Gray;
-            this.label3.Location = new System.Drawing.Point(99, 15);
-            this.label3.Margin = new System.Windows.Forms.Padding(0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(30, 13);
-            this.label3.TabIndex = 19;
-            this.label3.Text = "Build";
-            // 
-            // vMajor
-            // 
-            this.vMajor.BackColor = System.Drawing.Color.White;
-            this.vMajor.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.vMajor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.vMajor.Location = new System.Drawing.Point(14, 31);
-            this.vMajor.Maximum = new decimal(new int[] {
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this.vRevision = new System.Windows.Forms.TextBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.vMajor = new System.Windows.Forms.NumericUpDown();
+			this.label2 = new System.Windows.Forms.Label();
+			this.vMinor = new System.Windows.Forms.NumericUpDown();
+			this.label1 = new System.Windows.Forms.Label();
+			this.vBuild = new System.Windows.Forms.NumericUpDown();
+			this.NotTracked = new System.Windows.Forms.LinkLabel();
+			this.tbDebug = new System.Windows.Forms.RichTextBox();
+			this.buttonSVNCheck = new System.Windows.Forms.Button();
+			this.CheckVersion = new System.Windows.Forms.LinkLabel();
+			this.groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.vMajor)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.vMinor)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.vBuild)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.label4);
+			this.groupBox1.Controls.Add(this.vRevision);
+			this.groupBox1.Controls.Add(this.label3);
+			this.groupBox1.Controls.Add(this.vMajor);
+			this.groupBox1.Controls.Add(this.label2);
+			this.groupBox1.Controls.Add(this.vMinor);
+			this.groupBox1.Controls.Add(this.label1);
+			this.groupBox1.Controls.Add(this.vBuild);
+			this.groupBox1.Location = new System.Drawing.Point(12, 12);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(243, 60);
+			this.groupBox1.TabIndex = 4;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Version of ...";
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.ForeColor = System.Drawing.Color.Gray;
+			this.label4.Location = new System.Drawing.Point(165, 14);
+			this.label4.Margin = new System.Windows.Forms.Padding(0);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(48, 13);
+			this.label4.TabIndex = 20;
+			this.label4.Text = "Revision";
+			// 
+			// vRevision
+			// 
+			this.vRevision.Location = new System.Drawing.Point(168, 30);
+			this.vRevision.Name = "vRevision";
+			this.vRevision.ReadOnly = true;
+			this.vRevision.Size = new System.Drawing.Size(66, 20);
+			this.vRevision.TabIndex = 16;
+			this.vRevision.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.ForeColor = System.Drawing.Color.Gray;
+			this.label3.Location = new System.Drawing.Point(99, 15);
+			this.label3.Margin = new System.Windows.Forms.Padding(0);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(30, 13);
+			this.label3.TabIndex = 19;
+			this.label3.Text = "Build";
+			// 
+			// vMajor
+			// 
+			this.vMajor.BackColor = System.Drawing.Color.White;
+			this.vMajor.ForeColor = System.Drawing.SystemColors.WindowText;
+			this.vMajor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.vMajor.Location = new System.Drawing.Point(14, 31);
+			this.vMajor.Maximum = new decimal(new int[] {
             999,
             0,
             0,
             0});
-            this.vMajor.Name = "vMajor";
-            this.vMajor.ReadOnly = true;
-            this.vMajor.Size = new System.Drawing.Size(38, 20);
-            this.vMajor.TabIndex = 15;
-            this.vMajor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.vMajor.ValueChanged += new System.EventHandler(this.vMajor_ValueChanged);
-            this.vMajor.Click += new System.EventHandler(this.vMajor_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.Gray;
-            this.label2.Location = new System.Drawing.Point(55, 15);
-            this.label2.Margin = new System.Windows.Forms.Padding(0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(33, 13);
-            this.label2.TabIndex = 18;
-            this.label2.Text = "Minor";
-            // 
-            // vMinor
-            // 
-            this.vMinor.BackColor = System.Drawing.Color.White;
-            this.vMinor.Location = new System.Drawing.Point(58, 31);
-            this.vMinor.Maximum = new decimal(new int[] {
+			this.vMajor.Name = "vMajor";
+			this.vMajor.ReadOnly = true;
+			this.vMajor.Size = new System.Drawing.Size(38, 20);
+			this.vMajor.TabIndex = 15;
+			this.vMajor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.vMajor.ValueChanged += new System.EventHandler(this.vMajor_ValueChanged);
+			this.vMajor.Click += new System.EventHandler(this.vMajor_Click);
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.ForeColor = System.Drawing.Color.Gray;
+			this.label2.Location = new System.Drawing.Point(55, 15);
+			this.label2.Margin = new System.Windows.Forms.Padding(0);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(33, 13);
+			this.label2.TabIndex = 18;
+			this.label2.Text = "Minor";
+			// 
+			// vMinor
+			// 
+			this.vMinor.BackColor = System.Drawing.Color.White;
+			this.vMinor.Location = new System.Drawing.Point(58, 31);
+			this.vMinor.Maximum = new decimal(new int[] {
             9999,
             0,
             0,
             0});
-            this.vMinor.Name = "vMinor";
-            this.vMinor.ReadOnly = true;
-            this.vMinor.Size = new System.Drawing.Size(38, 20);
-            this.vMinor.TabIndex = 14;
-            this.vMinor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.vMinor.ValueChanged += new System.EventHandler(this.vMinor_ValueChanged);
-            this.vMinor.Click += new System.EventHandler(this.vMinor_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Gray;
-            this.label1.Location = new System.Drawing.Point(11, 15);
-            this.label1.Margin = new System.Windows.Forms.Padding(0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(33, 13);
-            this.label1.TabIndex = 17;
-            this.label1.Text = "Major";
-            // 
-            // vBuild
-            // 
-            this.vBuild.BackColor = System.Drawing.Color.White;
-            this.vBuild.Location = new System.Drawing.Point(102, 31);
-            this.vBuild.Maximum = new decimal(new int[] {
+			this.vMinor.Name = "vMinor";
+			this.vMinor.ReadOnly = true;
+			this.vMinor.Size = new System.Drawing.Size(38, 20);
+			this.vMinor.TabIndex = 14;
+			this.vMinor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.vMinor.ValueChanged += new System.EventHandler(this.vMinor_ValueChanged);
+			this.vMinor.Click += new System.EventHandler(this.vMinor_Click);
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.ForeColor = System.Drawing.Color.Gray;
+			this.label1.Location = new System.Drawing.Point(11, 15);
+			this.label1.Margin = new System.Windows.Forms.Padding(0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(33, 13);
+			this.label1.TabIndex = 17;
+			this.label1.Text = "Major";
+			// 
+			// vBuild
+			// 
+			this.vBuild.BackColor = System.Drawing.Color.White;
+			this.vBuild.Location = new System.Drawing.Point(102, 31);
+			this.vBuild.Maximum = new decimal(new int[] {
             999999,
             0,
             0,
             0});
-            this.vBuild.Name = "vBuild";
-            this.vBuild.ReadOnly = true;
-            this.vBuild.Size = new System.Drawing.Size(60, 20);
-            this.vBuild.TabIndex = 13;
-            this.vBuild.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.vBuild.ValueChanged += new System.EventHandler(this.vBuild_ValueChanged);
-            this.vBuild.Click += new System.EventHandler(this.vBuild_Click);
-            // 
-            // NotTracked
-            // 
-            this.NotTracked.BackColor = System.Drawing.SystemColors.Control;
-            this.NotTracked.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NotTracked.LinkArea = new System.Windows.Forms.LinkArea(13, 8);
-            this.NotTracked.Location = new System.Drawing.Point(0, 0);
-            this.NotTracked.Name = "NotTracked";
-            this.NotTracked.Size = new System.Drawing.Size(267, 120);
-            this.NotTracked.TabIndex = 10;
-            this.NotTracked.TabStop = true;
-            this.NotTracked.Text = "Not tracked\r\nTrack it";
-            this.NotTracked.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.NotTracked.UseCompatibleTextRendering = true;
-            // 
-            // tbDebug
-            // 
-            this.tbDebug.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.tbDebug.Location = new System.Drawing.Point(12, 118);
-            this.tbDebug.Name = "tbDebug";
-            this.tbDebug.Size = new System.Drawing.Size(241, 68);
-            this.tbDebug.TabIndex = 8;
-            this.tbDebug.Text = "";
-            this.tbDebug.Visible = false;
-            // 
-            // buttonSVNCheck
-            // 
-            this.buttonSVNCheck.Location = new System.Drawing.Point(12, 78);
-            this.buttonSVNCheck.Name = "buttonSVNCheck";
-            this.buttonSVNCheck.Size = new System.Drawing.Size(243, 27);
-            this.buttonSVNCheck.TabIndex = 9;
-            this.buttonSVNCheck.Text = "Read SVN revision (no update)";
-            this.buttonSVNCheck.UseVisualStyleBackColor = true;
-            this.buttonSVNCheck.Click += new System.EventHandler(this.buttonSVNCheck_Click);
-            // 
-            // PluginUI
-            // 
-            this.Controls.Add(this.buttonSVNCheck);
-            this.Controls.Add(this.tbDebug);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.NotTracked);
-            this.Name = "PluginUI";
-            this.Size = new System.Drawing.Size(267, 120);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.vMajor)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.vMinor)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.vBuild)).EndInit();
-            this.ResumeLayout(false);
+			this.vBuild.Name = "vBuild";
+			this.vBuild.ReadOnly = true;
+			this.vBuild.Size = new System.Drawing.Size(60, 20);
+			this.vBuild.TabIndex = 13;
+			this.vBuild.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.vBuild.ValueChanged += new System.EventHandler(this.vBuild_ValueChanged);
+			this.vBuild.Click += new System.EventHandler(this.vBuild_Click);
+			// 
+			// NotTracked
+			// 
+			this.NotTracked.BackColor = System.Drawing.SystemColors.Control;
+			this.NotTracked.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.NotTracked.LinkArea = new System.Windows.Forms.LinkArea(13, 8);
+			this.NotTracked.Location = new System.Drawing.Point(0, 0);
+			this.NotTracked.Name = "NotTracked";
+			this.NotTracked.Size = new System.Drawing.Size(267, 150);
+			this.NotTracked.TabIndex = 10;
+			this.NotTracked.TabStop = true;
+			this.NotTracked.Text = "Not tracked\r\nTrack it";
+			this.NotTracked.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.NotTracked.UseCompatibleTextRendering = true;
+			// 
+			// tbDebug
+			// 
+			this.tbDebug.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.tbDebug.Location = new System.Drawing.Point(12, 133);
+			this.tbDebug.Name = "tbDebug";
+			this.tbDebug.Size = new System.Drawing.Size(241, 68);
+			this.tbDebug.TabIndex = 8;
+			this.tbDebug.Text = "";
+			this.tbDebug.Visible = false;
+			// 
+			// buttonSVNCheck
+			// 
+			this.buttonSVNCheck.Location = new System.Drawing.Point(12, 78);
+			this.buttonSVNCheck.Name = "buttonSVNCheck";
+			this.buttonSVNCheck.Size = new System.Drawing.Size(243, 27);
+			this.buttonSVNCheck.TabIndex = 9;
+			this.buttonSVNCheck.Text = "Read SVN revision (no update)";
+			this.buttonSVNCheck.UseVisualStyleBackColor = true;
+			this.buttonSVNCheck.Click += new System.EventHandler(this.buttonSVNCheck_Click);
+			// 
+			// CheckVersion
+			// 
+			this.CheckVersion.AutoSize = true;
+			this.CheckVersion.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+			this.CheckVersion.Location = new System.Drawing.Point(12, 112);
+			this.CheckVersion.Name = "CheckVersion";
+			this.CheckVersion.Size = new System.Drawing.Size(55, 13);
+			this.CheckVersion.TabIndex = 11;
+			this.CheckVersion.TabStop = true;
+			this.CheckVersion.Text = "linkLabel1";
+			this.CheckVersion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.CheckVersion_LinkClicked);
+			// 
+			// PluginUI
+			// 
+			this.Controls.Add(this.CheckVersion);
+			this.Controls.Add(this.buttonSVNCheck);
+			this.Controls.Add(this.tbDebug);
+			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.NotTracked);
+			this.Name = "PluginUI";
+			this.Size = new System.Drawing.Size(267, 150);
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.vMajor)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.vMinor)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.vBuild)).EndInit();
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -471,6 +487,11 @@ namespace Version
         {
             FireChanged("TrackIt");
         }
+
+		private void CheckVersion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			System.Diagnostics.Process.Start("IExplore", "http://jeanlouis.persat.free.fr/fd/Version.zip");
+		}
 
  	}
 

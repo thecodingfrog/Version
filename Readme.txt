@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.285 - December 16, 2010
+      + Online check of new version of this plugin
+
      / 1.0.284 - December 15, 2010
       * SVN Rev number is now taken from the revision of the version file
 
