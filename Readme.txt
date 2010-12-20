@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.290 - December 21, 2010
+      + Now AS2 compatible
+
      / 1.0.285 - December 16, 2010
       + Online check of new version of this plugin
 

@@ -22,6 +22,12 @@ using SharpSvn;
 
 namespace Version
 {
+	public enum Language
+	{
+		AS2,
+		AS3
+	}
+	
 	public class PluginMain : IPlugin
 	{
 		private String pluginName = "Version";
@@ -43,6 +49,7 @@ namespace Version
         private String __projectPath;
         private String __packagePath;
         private CompilationModes __lastAction;
+		private Language __language;
 
 	    #region Required Properties
 
@@ -423,69 +430,139 @@ namespace Version
         /// </summary>
         private void CheckVersionFile()
         {
-            //pluginUI.Debug.Text += "PluginBase.CurrentProject.Name: " + PluginBase.CurrentProject.Name + "\n";
+			IProject __project = PluginBase.CurrentProject;
+			
+			//pluginUI.Debug.Text += "PluginBase.CurrentProject.Name: " + PluginBase.CurrentProject.Name + "\n";
             //pluginUI.Debug.Text += "PluginBase.CurrentProject.SourcePaths: " + PluginBase.CurrentProject.SourcePaths + "\n";
             //pluginUI.Debug.Text += "__projectPath: " + __projectPath + "\n";
             //pluginUI.Debug.Text += "PluginBase.CurrentProject.OutputPathAbsolute: " + PluginBase.CurrentProject.OutputPathAbsolute + "\n";
-            Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
+            
 
             __vAuthor = CheckAuthorName();
 
             checkSVN();
+
+			switch (__project.Language)
+			{
+				case "as2":
+					CheckAS2VersionFile();
+					__language = Language.AS2;
+					break;
+				case "as3":
+					CheckAS3VersionFile();
+					__language = Language.AS3;
+					break;
+			}
             
-            if (!File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
-            {
-                if (File.Exists(__projectPath + "\\" + settingObject.OldClassName + ".as") && settingObject.ClassName != settingObject.OldClassName)
-                {
-                    File.Move(__projectPath + "\\" + settingObject.OldClassName + ".as", __projectPath + "\\" + settingObject.ClassName + ".as");
-                    string sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-                    
-                    RegexOptions options = new RegexOptions();
-                    options |= RegexOptions.Multiline;
-                    options |= RegexOptions.IgnoreCase;
-
-                    sVersionContent = Regex.Replace(sVersionContent, @"public final class " + settingObject.OldClassName, "public final class " + settingObject.ClassName, options);
-                    FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-
-                    __vMajor = decimal.Parse(getValue(sVersionContent, @"static public const Major:int = (\d+);"));
-                    __vMinor = decimal.Parse(getValue(sVersionContent, @"static public const Minor:int = (\d+);"));
-                    __vBuild = decimal.Parse(getValue(sVersionContent, @"static public const Build:int = (\d+);"));
-                }
-                else
-                {
-                    string sVersionContent = "package " + __packagePath + "\r\n" +
-                            "{" + "\r\n" +
-                            "  public final class " + settingObject.ClassName + "\r\n" +
-                            "  {" + "\r\n" +
-                            "      static public const Major:int = 1;" + "\r\n" +
-                            "      static public const Minor:int = 0;" + "\r\n" +
-                            "      static public const Build:int = 0;" + "\r\n" +
-                            "      static public const Revision:int = 0;" + "\r\n" +
-                            "      static public const Timestamp:String = \"" + DateTime.Now + "\";" + "\r\n" +
-                            "      static public const Author:String = \"" + CheckAuthorName() + "\";" + "\r\n" +
-                            "  }" + "\r\n" +
-                            "}";
-                    FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-
-                    __vMajor = 1;
-                    __vMinor = 0;
-                    __vBuild = 0;
-                }                
-            }
-            else
-            {
-                String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-
-                __vMajor = decimal.Parse(getValue(sVersionContent, @"static public const Major:int = (\d+);"));
-                __vMinor = decimal.Parse(getValue(sVersionContent, @"static public const Minor:int = (\d+);"));
-                __vBuild = decimal.Parse(getValue(sVersionContent, @"static public const Build:int = (\d+);"));
-            }
             this.pluginUI.Changed -= VersionChanged;
             this.pluginUI.Major = __vMajor;
             this.pluginUI.Minor = __vMinor;
             this.pluginUI.Build = __vBuild;
             this.pluginUI.Changed += VersionChanged;
-        }
+		}
+
+		private void CheckAS2VersionFile()
+		{
+			Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
+
+			if (!File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
+			{
+				if (File.Exists(__projectPath + "\\" + settingObject.OldClassName + ".as") && settingObject.ClassName != settingObject.OldClassName)
+				{
+					File.Move(__projectPath + "\\" + settingObject.OldClassName + ".as", __projectPath + "\\" + settingObject.ClassName + ".as");
+					string sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
+
+					RegexOptions options = new RegexOptions();
+					options |= RegexOptions.Multiline;
+					options |= RegexOptions.IgnoreCase;
+
+					sVersionContent = Regex.Replace(sVersionContent, @"class " + settingObject.OldClassName, "class " + settingObject.ClassName, options);
+					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
+
+					__vMajor = decimal.Parse(getValue(sVersionContent, @"static public var Major:Number = (\d+);"));
+					__vMinor = decimal.Parse(getValue(sVersionContent, @"static public var Minor:Number = (\d+);"));
+					__vBuild = decimal.Parse(getValue(sVersionContent, @"static public var Build:Number = (\d+);"));
+				}
+				else
+				{
+					string sVersionContent = "class " + settingObject.ClassName + "\r\n" +
+							"{" + "\r\n" +
+							"	static public var Major:Number = 1;" + "\r\n" +
+							"	static public var Minor:Number = 0;" + "\r\n" +
+							"	static public var Build:Number = 0;" + "\r\n" +
+							"	static public var Revision:Number = 0;" + "\r\n" +
+							"	static public var Timestamp:String = \"" + DateTime.Now + "\";" + "\r\n" +
+							"	static public var Author:String = \"" + CheckAuthorName() + "\";" + "\r\n" +
+							"}";
+					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
+
+					__vMajor = 1;
+					__vMinor = 0;
+					__vBuild = 0;
+				}
+			}
+			else
+			{
+				String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
+
+				__vMajor = decimal.Parse(getValue(sVersionContent, @"static public var Major:Number = (\d+);"));
+				__vMinor = decimal.Parse(getValue(sVersionContent, @"static public var Minor:Number = (\d+);"));
+				__vBuild = decimal.Parse(getValue(sVersionContent, @"static public var Build:Number = (\d+);"));
+			}
+		}
+
+		private void CheckAS3VersionFile()
+		{
+			Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
+
+			if (!File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
+			{
+				if (File.Exists(__projectPath + "\\" + settingObject.OldClassName + ".as") && settingObject.ClassName != settingObject.OldClassName)
+				{
+					File.Move(__projectPath + "\\" + settingObject.OldClassName + ".as", __projectPath + "\\" + settingObject.ClassName + ".as");
+					string sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
+
+					RegexOptions options = new RegexOptions();
+					options |= RegexOptions.Multiline;
+					options |= RegexOptions.IgnoreCase;
+
+					sVersionContent = Regex.Replace(sVersionContent, @"public final class " + settingObject.OldClassName, "public final class " + settingObject.ClassName, options);
+					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
+
+					__vMajor = decimal.Parse(getValue(sVersionContent, @"static public const Major:int = (\d+);"));
+					__vMinor = decimal.Parse(getValue(sVersionContent, @"static public const Minor:int = (\d+);"));
+					__vBuild = decimal.Parse(getValue(sVersionContent, @"static public const Build:int = (\d+);"));
+				}
+				else
+				{
+					string sVersionContent = "package " + __packagePath + "\r\n" +
+							"{" + "\r\n" +
+							"  public final class " + settingObject.ClassName + "\r\n" +
+							"  {" + "\r\n" +
+							"      static public const Major:int = 1;" + "\r\n" +
+							"      static public const Minor:int = 0;" + "\r\n" +
+							"      static public const Build:int = 0;" + "\r\n" +
+							"      static public const Revision:int = 0;" + "\r\n" +
+							"      static public const Timestamp:String = \"" + DateTime.Now + "\";" + "\r\n" +
+							"      static public const Author:String = \"" + CheckAuthorName() + "\";" + "\r\n" +
+							"  }" + "\r\n" +
+							"}";
+					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
+
+					__vMajor = 1;
+					__vMinor = 0;
+					__vBuild = 0;
+				}
+			}
+			else
+			{
+				String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
+
+				__vMajor = decimal.Parse(getValue(sVersionContent, @"static public const Major:int = (\d+);"));
+				__vMinor = decimal.Parse(getValue(sVersionContent, @"static public const Minor:int = (\d+);"));
+				__vBuild = decimal.Parse(getValue(sVersionContent, @"static public const Build:int = (\d+);"));
+			}
+		}
 
         /// <summary>
         /// Gets the value.
@@ -579,7 +656,7 @@ namespace Version
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
+			this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = LocaleHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockRight);
 
@@ -642,7 +719,7 @@ namespace Version
 				Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
 				this.settingObject = (Settings)obj;
 			}
-            this.settingObject.Changed += SettingObjectChanged;
+            this.settingObject.Changed += SettingObjectChanged;          
         }
 
         /// <summary>
@@ -722,16 +799,32 @@ namespace Version
                         options |= RegexOptions.Multiline;
                         options |= RegexOptions.IgnoreCase;
 
-                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Major:int = (\d+);", "static public const Major:int = " + __vMajor + ";", options);
-                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Minor:int = (\d+);", "static public const Minor:int = " + __vMinor + ";", options);
-                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Build:int = (\d+);", "static public const Build:int = " + __vBuild + ";", options);
-                        sVersionContent = Regex.Replace(sVersionContent, @"static public const Revision:int = (\d+);", "static public const Revision:int = " + __vRevision + ";", options);
+						if (__language == Language.AS3)
+						{
+							sVersionContent = Regex.Replace(sVersionContent, @"static public const Major:int = (\d+);", "static public const Major:int = " + __vMajor + ";", options);
+							sVersionContent = Regex.Replace(sVersionContent, @"static public const Minor:int = (\d+);", "static public const Minor:int = " + __vMinor + ";", options);
+							sVersionContent = Regex.Replace(sVersionContent, @"static public const Build:int = (\d+);", "static public const Build:int = " + __vBuild + ";", options);
+							sVersionContent = Regex.Replace(sVersionContent, @"static public const Revision:int = (\d+);", "static public const Revision:int = " + __vRevision + ";", options);
 
-                        String pattern = @"static public const Timestamp:String = ""(.*)"";";
-                        sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Timestamp:String = \"" + DateTime.Now + "\";", options);
+							String pattern = @"static public const Timestamp:String = ""(.*)"";";
+							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Timestamp:String = \"" + DateTime.Now + "\";", options);
 
-                        pattern = @"static public const Author:String = ""(\.*|\w*)"";";
-                        sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Author:String = \"" + __vAuthor + "\";", options);
+							pattern = @"static public const Author:String = ""(\.*|\w*)"";";
+							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Author:String = \"" + __vAuthor + "\";", options);
+						}
+						if (__language == Language.AS2)
+						{
+							sVersionContent = Regex.Replace(sVersionContent, @"static public var Major:Number = (\d+);", "static public var Major:Number = " + __vMajor + ";", options);
+							sVersionContent = Regex.Replace(sVersionContent, @"static public var Minor:Number = (\d+);", "static public var Minor:Number = " + __vMinor + ";", options);
+							sVersionContent = Regex.Replace(sVersionContent, @"static public var Build:Number = (\d+);", "static public var Build:Number = " + __vBuild + ";", options);
+							sVersionContent = Regex.Replace(sVersionContent, @"static public var Revision:Number = (\d+);", "static public var Revision:Number = " + __vRevision + ";", options);
+
+							String pattern = @"static public var Timestamp:String = ""(.*)"";";
+							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public var Timestamp:String = \"" + DateTime.Now + "\";", options);
+
+							pattern = @"static public var Author:String = ""(\.*|\w*)"";";
+							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public var Author:String = \"" + __vAuthor + "\";", options);
+						}
 
                         FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
                     }
