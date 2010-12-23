@@ -35,6 +35,10 @@ Known Bugs/Issues
 
 Version History
 
+
+     / 1.0.294 - December 23, 2010
+      + Check SVN button is now functional
+
      / 1.0.290 - December 21, 2010
       + Now AS2 compatible
 

@@ -699,8 +699,8 @@ namespace Version
 				this.pluginUI.CheckVersion.Enabled = false;
 			}
 			
-
             this.pluginUI.Changed += VersionChanged;
+			this.pluginUI.SVNCheck += checkSVN;
         }
 
         /// <summary>
@@ -719,7 +719,7 @@ namespace Version
 				Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
 				this.settingObject = (Settings)obj;
 			}
-            this.settingObject.Changed += SettingObjectChanged;          
+            this.settingObject.Changed += SettingObjectChanged;
         }
 
         /// <summary>
@@ -731,6 +731,8 @@ namespace Version
 				this.settingObject.Changed -= SettingObjectChanged;
 			if (this.pluginUI != null)
 				this.pluginUI.Changed -= VersionChanged;
+			if (this.pluginUI != null)
+				this.pluginUI.SVNCheck -= checkSVN;
 			
 			ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
@@ -859,7 +861,7 @@ namespace Version
         /// </summary>
         private void checkSVN()
         {
-            SvnClient __svnClient = new SvnClient();
+			SvnClient __svnClient = new SvnClient();
             SvnInfoEventArgs __sieaInfo;
             bool __getInfo;
             if (__projectPath != "")
