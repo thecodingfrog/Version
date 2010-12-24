@@ -327,6 +327,7 @@ namespace Version
 			this.NotTracked.Text = "Not tracked\r\nTrack it";
 			this.NotTracked.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.NotTracked.UseCompatibleTextRendering = true;
+			this.NotTracked.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.NotTracked_LinkClicked_1);
 			// 
 			// tbDebug
 			// 
@@ -369,6 +370,7 @@ namespace Version
 			this.Controls.Add(this.NotTracked);
 			this.Name = "PluginUI";
 			this.Size = new System.Drawing.Size(267, 150);
+			this.Resize += new System.EventHandler(this.PluginUI_Resize);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.vMajor)).EndInit();
@@ -377,6 +379,13 @@ namespace Version
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
+		}
+
+		private void PluginUI_Resize(object sender, System.EventArgs e)
+		{
+			Invalidate();
+			this.groupBox1.Width = this.Width - 20;
+			this.buttonSVNCheck.Width = this.Width - 20;
 		}
 
 		#endregion
@@ -491,6 +500,11 @@ namespace Version
 		private void CheckVersion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			System.Diagnostics.Process.Start("IExplore", "http://jeanlouis.persat.free.fr/fd/Version.zip");
+		}
+
+		private void NotTracked_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+
 		}
 
  	}
