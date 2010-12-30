@@ -35,6 +35,8 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.302 - December 30, 2010
+      + Added a namespace detection for Air application.xml
 
      / 1.0.294 - December 23, 2010
       + Check SVN button is now functional
