@@ -123,6 +123,15 @@
   <data name="Info.Description" xml:space="preserve">
     <value>Version number Plugin For FlashDevelop 3</value>
   </data>
+  <data name="Info.Inacessible" xml:space="preserve">
+    <value>Version checker not accessible</value>
+  </data>
+  <data name="Info.Latest" xml:space="preserve">
+    <value>You have latest build of this plugin</value>
+  </data>
+  <data name="Info.New" xml:space="preserve">
+    <value>A new build ({0}) is available!</value>
+  </data>
   <data name="Info.Package" xml:space="preserve">
     <value>Package</value>
   </data>

@@ -79,6 +79,33 @@ namespace Version.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Version checker not accessible.
+        /// </summary>
+        internal static string Info_Inacessible {
+            get {
+                return ResourceManager.GetString("Info.Inacessible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have latest build of this plugin.
+        /// </summary>
+        internal static string Info_Latest {
+            get {
+                return ResourceManager.GetString("Info.Latest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A new build ({0}) is available!.
+        /// </summary>
+        internal static string Info_New {
+            get {
+                return ResourceManager.GetString("Info.New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Package.
         /// </summary>
         internal static string Info_Package {

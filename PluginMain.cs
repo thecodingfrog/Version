@@ -660,42 +660,50 @@ namespace Version
             this.pluginUI.Text = LocaleHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockRight);
 
-			StringBuilder sb = new StringBuilder();
-			byte[] buf = new byte[8192];
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://jeanlouis.persat.free.fr/fd/check.php");
-			HttpWebResponse response = (HttpWebResponse) request.GetResponse();
-			Stream resStream = response.GetResponseStream();
-			string tempString = null;
-			int count = 0;
-
-			do
+			try
 			{
-				// fill the buffer with data
-				count = resStream.Read(buf, 0, buf.Length);
+				StringBuilder sb = new StringBuilder();
+				byte[] buf = new byte[8192];
+				HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://jeanlouis.persat.free.fr/fd/check.php");
+				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+				Stream resStream = response.GetResponseStream();
+				string tempString = null;
+				int count = 0;
 
-				// make sure we read some data
-				if (count != 0)
+				do
 				{
-					// translate from bytes to ASCII text
-					tempString = Encoding.ASCII.GetString(buf, 0, count);
+					// fill the buffer with data
+					count = resStream.Read(buf, 0, buf.Length);
 
-					// continue building the string
-					sb.Append(tempString);
+					// make sure we read some data
+					if (count != 0)
+					{
+						// translate from bytes to ASCII text
+						tempString = Encoding.ASCII.GetString(buf, 0, count);
+
+						// continue building the string
+						sb.Append(tempString);
+					}
+				}
+				while (count > 0);
+
+				Assembly assem = Assembly.GetExecutingAssembly();
+				AssemblyName assemName = assem.GetName();
+				int result = string.Compare(assemName.Version.ToString(), sb.ToString());
+				if (result < 0)
+				{
+					this.pluginUI.CheckVersion.Text = String.Format(LocaleHelper.GetString("Info.New"), sb.ToString());
+					this.pluginUI.CheckVersion.Enabled = true;
+				}
+				else
+				{
+					this.pluginUI.CheckVersion.Text = LocaleHelper.GetString("Info.Latest");
+					this.pluginUI.CheckVersion.Enabled = false;
 				}
 			}
-			while (count > 0);
-
-			Assembly assem = Assembly.GetExecutingAssembly();
-			AssemblyName assemName = assem.GetName();
-			int result = string.Compare(assemName.Version.ToString(), sb.ToString());
-			if (result < 0)
+			catch (Exception ex)
 			{
-				this.pluginUI.CheckVersion.Text = "A new build (" + sb.ToString() + ") is available!";
-				this.pluginUI.CheckVersion.Enabled = true;
-			}
-			else
-			{
-				this.pluginUI.CheckVersion.Text = "You have latest build of this plugin";
+				this.pluginUI.CheckVersion.Text = LocaleHelper.GetString("Info.Inaccessible");
 				this.pluginUI.CheckVersion.Enabled = false;
 			}
 			
