@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Version", "Version.csproj", "{78101C01-E186-4954-B1DD-DEBB7905FAD8}"
 EndProject
 Global
@@ -24,8 +24,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SZOpenFile = false
-		SZOpenFolder = false
 		SZPath = C:\dev\flashdevelop\FD3\External\Plugins\Version\Version_souces.zip
+		SZOpenFolder = false
+		SZOpenFile = false
 	EndGlobalSection
 EndGlobal

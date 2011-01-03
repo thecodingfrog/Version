@@ -839,8 +839,10 @@ namespace Version
                         {
                             XmlDocument __xmlDoc = new XmlDocument();
                             __xmlDoc.Load(__projectBaseDir + "\\application.xml");
+							string __xmlNV = GetNamespaceVersion(__xmlDoc);
+
 							XmlNamespaceManager __NsMgr = new XmlNamespaceManager(__xmlDoc.NameTable);
-							__NsMgr.AddNamespace("air", "http://ns.adobe.com/air/application/" + CatchNS(__xmlDoc));
+							__NsMgr.AddNamespace("air", "http://ns.adobe.com/air/application/" + __xmlNV);
 							
 							XmlNode __root = __xmlDoc.DocumentElement;
                             XmlNode __nodeVersion = __root.SelectSingleNode("/air:application/air:version", __NsMgr);
@@ -856,30 +858,19 @@ namespace Version
 
         }
 
-		private string CatchNS(XmlDocument __xmlDoc)
+		private string GetNamespaceVersion(XmlDocument __xmlDoc)
 		{
-			string __xmltext = string.Empty;
+			string __result;
 			try
 			{
-				__xmltext = getValue(__xmlDoc.InnerXml, @"http://ns\.adobe\.com/air/application/(\d+\.\d+)");
+				string __ns = __xmlDoc.DocumentElement.NamespaceURI.ToLower();
+				__result = __ns.Replace("http://ns.adobe.com/air/application/", "");
 			}
 			catch (Exception ex)
 			{
-				__xmltext = "1.5";
+				__result = "1.5";
 			}
-			return __xmltext;
-		}
-
-		private void ShowAllNamespaces(XmlNamespaceManager nsmgr)
-		{
-			do
-			{
-				foreach (String prefix in nsmgr)
-				{
-					MessageBox.Show(prefix + ":" + nsmgr.LookupNamespace(prefix));
-				}
-			}
-			while (nsmgr.PopScope());
+			return __result;
 		}
 
 

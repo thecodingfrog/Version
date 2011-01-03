@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.304 - January 3, 2011
+      * AIR Namespace detection routine changed
+
      / 1.0.302 - December 30, 2010
       + Added a namespace detection for Air application.xml
 
