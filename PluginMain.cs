@@ -44,7 +44,7 @@ namespace Version
         private decimal __vMajor = 1;
         private decimal __vMinor = 0;
         private decimal __vBuild = 0;
-        private int __vRevision;
+        private int __vRevision = 0;
         private String __vAuthor;
         private String __projectPath;
         private String __packagePath;
@@ -499,7 +499,7 @@ namespace Version
 							"	static public var Major:Number = 1;" + "\r\n" +
 							"	static public var Minor:Number = 0;" + "\r\n" +
 							"	static public var Build:Number = 0;" + "\r\n" +
-							"	static public var Revision:Number = 0;" + "\r\n" +
+							"	static public var Revision:Number = " + __vRevision + ";" + "\r\n" +
 							"	static public var Timestamp:String = \"" + DateTime.Now + "\";" + "\r\n" +
 							"	static public var Author:String = \"" + CheckAuthorName() + "\";" + "\r\n" +
 							"}";
@@ -560,7 +560,7 @@ namespace Version
 							"      static public const Major:int = 1;" + "\r\n" +
 							"      static public const Minor:int = 0;" + "\r\n" +
 							"      static public const Build:int = 0;" + "\r\n" +
-							"      static public const Revision:int = 0;" + "\r\n" +
+							"      static public const Revision:int = " + __vRevision + "\r\n" +
 							"      static public const Timestamp:String = \"" + DateTime.Now + "\";" + "\r\n" +
 							"      static public const Author:String = \"" + CheckAuthorName() + "\";" + "\r\n" +
 							"  }" + "\r\n" +
@@ -917,21 +917,26 @@ namespace Version
             bool __getInfo;
             if (__projectPath != "")
             {
-                try
-                {
+				try
+				{
 					__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath + "\\" + settingObject.ClassName + ".as"), out __sieaInfo);
-                    pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
-                    __vRevision = (int)__sieaInfo.LastChangeRevision;
-                }
-                catch (SvnException e)
-                {
-                    __vRevision = 0;
-                    pluginUI.Revision.Text = "";
-                }
-                /*catch (SvnClientException e)
-                {
-                    //
-                }*/
+					pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
+					__vRevision = (int)__sieaInfo.LastChangeRevision;
+				}
+				catch (SvnException e)
+				{
+					try
+					{
+						__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath), out __sieaInfo);
+						pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
+						__vRevision = (int)__sieaInfo.LastChangeRevision;
+					}
+					catch (SvnException ex)
+					{
+						__vRevision = 0;
+						pluginUI.Revision.Text = "";
+					}
+				}
             }
             else
             {

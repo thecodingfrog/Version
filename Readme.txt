@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.329 - January 4, 2011
+      + Getting SVN rev from project path if available and version.as has not been created yet
+
      / 1.0.327 - January 4, 2011
       * Ugly trace message removed
 
