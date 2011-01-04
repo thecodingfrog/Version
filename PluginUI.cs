@@ -194,6 +194,7 @@ namespace Version
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.label4);
+			this.groupBox1.Controls.Add(this.buttonSVNCheck);
 			this.groupBox1.Controls.Add(this.vRevision);
 			this.groupBox1.Controls.Add(this.label3);
 			this.groupBox1.Controls.Add(this.vMajor);
@@ -203,10 +204,11 @@ namespace Version
 			this.groupBox1.Controls.Add(this.vBuild);
 			this.groupBox1.Location = new System.Drawing.Point(12, 12);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(243, 60);
+			this.groupBox1.Size = new System.Drawing.Size(243, 92);
 			this.groupBox1.TabIndex = 4;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Version of ...";
+			this.groupBox1.Visible = false;
 			// 
 			// label4
 			// 
@@ -224,7 +226,7 @@ namespace Version
 			this.vRevision.Location = new System.Drawing.Point(168, 30);
 			this.vRevision.Name = "vRevision";
 			this.vRevision.ReadOnly = true;
-			this.vRevision.Size = new System.Drawing.Size(66, 20);
+			this.vRevision.Size = new System.Drawing.Size(69, 20);
 			this.vRevision.TabIndex = 16;
 			this.vRevision.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -341,9 +343,9 @@ namespace Version
 			// 
 			// buttonSVNCheck
 			// 
-			this.buttonSVNCheck.Location = new System.Drawing.Point(12, 78);
+			this.buttonSVNCheck.Location = new System.Drawing.Point(14, 57);
 			this.buttonSVNCheck.Name = "buttonSVNCheck";
-			this.buttonSVNCheck.Size = new System.Drawing.Size(243, 27);
+			this.buttonSVNCheck.Size = new System.Drawing.Size(223, 25);
 			this.buttonSVNCheck.TabIndex = 9;
 			this.buttonSVNCheck.Text = "Read SVN revision (no update)";
 			this.buttonSVNCheck.UseVisualStyleBackColor = true;
@@ -353,7 +355,7 @@ namespace Version
 			// 
 			this.CheckVersion.AutoSize = true;
 			this.CheckVersion.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-			this.CheckVersion.Location = new System.Drawing.Point(12, 112);
+			this.CheckVersion.Location = new System.Drawing.Point(96, 112);
 			this.CheckVersion.Name = "CheckVersion";
 			this.CheckVersion.Size = new System.Drawing.Size(55, 13);
 			this.CheckVersion.TabIndex = 11;
@@ -364,7 +366,6 @@ namespace Version
 			// PluginUI
 			// 
 			this.Controls.Add(this.CheckVersion);
-			this.Controls.Add(this.buttonSVNCheck);
 			this.Controls.Add(this.tbDebug);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.NotTracked);
@@ -385,7 +386,8 @@ namespace Version
 		{
 			Invalidate();
 			this.groupBox1.Width = this.Width - 20;
-			this.buttonSVNCheck.Width = this.Width - 20;
+			this.buttonSVNCheck.Width = groupBox1.Width - 27;
+			this.CheckVersion.Left = this.groupBox1.Left + (this.groupBox1.Width / 2) - (this.CheckVersion.Width/2);
 		}
 
 		#endregion

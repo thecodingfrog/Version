@@ -35,6 +35,12 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.326 - January 4, 2011
+      * UI improvements
+
+     / 1.0.324 - January 4, 2011
+      * Bug fixes and improvements of package path
+
      / 1.0.304 - January 3, 2011
       * AIR Namespace detection routine changed
 

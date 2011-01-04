@@ -213,7 +213,7 @@ namespace Version.Helpers
 
 		private void btnOK_Click(object sender, System.EventArgs e)
 		{
-            this.__ProjectPath = pathTextBox.Text;
+            this.__ProjectPath = pathTextBox.Text.Replace("/", "\\");
             this.__PackagePath = packageTextBox.Text;
             CancelEventArgs cancelArgs = new CancelEventArgs(false);
 			OnValidating(cancelArgs);
@@ -235,38 +235,51 @@ namespace Version.Helpers
             pathTextBox.Select(start, length);
         }
 
-        private String FormatPackage(String __path)
+		private String FormatPackage(string __path)
+		{
+			return FormatPackage(__path, false);
+		}
+
+		private String FormatPackage(string __path, bool __relative)
         {
             string __refpath;
             string __newpath;
-            if (PluginCore.PluginBase.CurrentProject.SourcePaths.Length > 0)
-            {
-                __refpath = PluginCore.PluginBase.CurrentProject.GetAbsolutePath(PluginCore.PluginBase.CurrentProject.SourcePaths[0]);
-                if (__path.Length > __refpath.Length)
-                {
-                    __newpath = __path.Substring(__refpath.Length);
-                }
-                else
-                {
-                    __newpath = "";
-                }              
-            }
-            else
-            {
-                __refpath = PluginCore.PluginBase.CurrentProject.ProjectPath;
-                int __pos = PluginCore.PluginBase.CurrentProject.ProjectPath.LastIndexOf("\\");
-                __refpath = PluginCore.PluginBase.CurrentProject.ProjectPath.Substring(0, __pos + 1);
+			if (!__relative)
+			{
+				if (PluginCore.PluginBase.CurrentProject.SourcePaths.Length > 0)
+				{
+					__refpath = PluginCore.PluginBase.CurrentProject.GetAbsolutePath(PluginCore.PluginBase.CurrentProject.SourcePaths[0]);
+					//MessageBox.Show(__path + ":" + __refpath + "\n" + __path.Length + " > " + __refpath.Length);
+					if (__path.Length > __refpath.Length)
+					{
+						__newpath = __path.Substring(__refpath.Length);
+					}
+					else
+					{
+						__newpath = "";
+					}              
+				}
+				else
+				{
+					__refpath = PluginCore.PluginBase.CurrentProject.ProjectPath;
+					int __pos = PluginCore.PluginBase.CurrentProject.ProjectPath.LastIndexOf("\\");
+					__refpath = PluginCore.PluginBase.CurrentProject.ProjectPath.Substring(0, __pos + 1);
 
-                //MessageBox.Show(__path + ":" + __refpath + "\n" + __path.Length + " > " + __refpath.Length); 
-                if (__path.Length > __refpath.Length)
-                {
-                    __newpath = __path.Substring(__refpath.Length);
-                }
-                else
-                {
-                    __newpath = "";
-                }
-            }
+					//MessageBox.Show(__path + ":" + __refpath + "\n" + __path.Length + " > " + __refpath.Length); 
+					if (__path.Length > __refpath.Length)
+					{
+						__newpath = __path.Substring(__refpath.Length);
+					}
+					else
+					{
+						__newpath = "";
+					}
+				}
+			}
+			else
+			{
+				__newpath = __path;
+			}
             //MessageBox.Show(__newpath);
             if (__newpath != "")
             {
@@ -289,12 +302,13 @@ namespace Version.Helpers
             if (checkBox1.Checked)
             {
                 __RelativeProjectPath = pathTextBox.Text;
+				packageTextBox.Text = FormatPackage(__RelativeProjectPath, true);
             }
             else
             {
                 __AbsoluteProjectPath = pathTextBox.Text;
-            }
-            packageTextBox.Text = FormatPackage(pathTextBox.Text);
+				packageTextBox.Text = FormatPackage(__AbsoluteProjectPath);
+            }            
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
