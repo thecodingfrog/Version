@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.327 - January 4, 2011
+      * Ugly trace message removed
+
      / 1.0.326 - January 4, 2011
       * UI improvements
 

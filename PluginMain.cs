@@ -823,7 +823,7 @@ namespace Version
                     __vMajor = pluginUI.Major;
                     __vMinor = pluginUI.Minor;
                     __vBuild = pluginUI.Build;
-					MessageBox.Show("here");
+					//MessageBox.Show("here");
                     if (File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
                     {
                         String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
