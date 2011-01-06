@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.330 - January 6, 2011
+      + Will check SVN rev at each compilation start so if SVN has been committed or updated, rev will be updated
+
      / 1.0.329 - January 4, 2011
       + Getting SVN rev from project path if available and version.as has not been created yet
 

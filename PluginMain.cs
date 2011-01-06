@@ -609,6 +609,7 @@ namespace Version
         {
             __vBuild++;
             pluginUI.Build = __vBuild;
+			checkSVN();
         }
 
         /// <summary>
