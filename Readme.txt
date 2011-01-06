@@ -35,6 +35,10 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.332 - January 6, 2011
+      * bug fix with SVN checking at compilation
+      * bug fix with decementing build on error
+
      / 1.0.330 - January 6, 2011
       + Will check SVN rev at each compilation start so if SVN has been committed or updated, rev will be updated
 

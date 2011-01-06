@@ -179,9 +179,9 @@ namespace Version
                 case EventType.ProcessEnd:
                     //MessageBox.Show("EventType.ProcessEnd");
                     string res = (e as TextEvent).Value;
-                    //MessageBox.Show(res);
+                    //MessageBox.Show(hasNoCompilationError(res).ToString());
                     //MessageBox.Show(__lastAction.ToString());
-                    if (hasCompilationError(res)
+                    if (!hasNoCompilationError(res)
                             && settingObject.AutoIncrement
                             && (settingObject.CompilationMode == CompilationModes.Both
                                 || (settingObject.CompilationMode == CompilationModes.Build && __lastAction == CompilationModes.Build)
@@ -203,13 +203,13 @@ namespace Version
         /// <returns>
         /// 	<c>true</c> if [has compilation error] [the specified value]; otherwise, <c>false</c>.
         /// </returns>
-        private bool hasCompilationError(string value)
+        private bool hasNoCompilationError(string value)
         {
             RegexOptions options = new RegexOptions();
             options |= RegexOptions.Multiline;
             options |= RegexOptions.IgnoreCase;
 
-            return Regex.IsMatch(value, @"Done\s*(0)", options);
+            return Regex.IsMatch(value, @"Done\s*\(0\)", options);
         }
 
         /// <summary>
@@ -607,9 +607,9 @@ namespace Version
         /// </summary>
         private void IncrementVersion()
         {
-            __vBuild++;
-            pluginUI.Build = __vBuild;
+			__vBuild++;
 			checkSVN();
+            pluginUI.Build = __vBuild;
         }
 
         /// <summary>
