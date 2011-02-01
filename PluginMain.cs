@@ -806,8 +806,7 @@ namespace Version
         /// </summary>
         private void VersionChanged(string type)
         {
-			MessageBox.Show("VersionChanged: " + __vRevision);
-            switch (type)
+			switch (type)
             {
                 case "TrackIt":
                     //MessageBox.Show("here");
@@ -935,7 +934,7 @@ namespace Version
 					}
 					catch (SvnException ex)
 					{
-						MessageBox.Show(e.Message);
+						//MessageBox.Show(e.Message);
 						__vRevision = 0;
 						pluginUI.Revision.Text = "";
 					}
