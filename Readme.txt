@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 1.0.336 - February 1, 2011
+      * bug fix in writting revision data
+      
      / 1.0.332 - January 6, 2011
       * bug fix with SVN checking at compilation
       * bug fix with decementing build on error

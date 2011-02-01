@@ -496,12 +496,12 @@ namespace Version
 				{
 					string sVersionContent = "class " + BuildPackagePath(__packagePath) + settingObject.ClassName + "\r\n" +
 							"{" + "\r\n" +
-							"	static public var Major:Number = 1;" + "\r\n" +
-							"	static public var Minor:Number = 0;" + "\r\n" +
-							"	static public var Build:Number = 0;" + "\r\n" +
-							"	static public var Revision:Number = " + __vRevision + ";" + "\r\n" +
-							"	static public var Timestamp:String = \"" + DateTime.Now + "\";" + "\r\n" +
-							"	static public var Author:String = \"" + CheckAuthorName() + "\";" + "\r\n" +
+							"	static public var Major:Number = 1;\r\n" +
+							"	static public var Minor:Number = 0;\r\n" +
+							"	static public var Build:Number = 0;\r\n" +
+							"	static public var Revision:Number = " + __vRevision + ";\r\n" +
+							"	static public var Timestamp:String = \"" + DateTime.Now + "\";\r\n" +
+							"	static public var Author:String = \"" + CheckAuthorName() + "\";\r\n" +
 							"}";
 					if (!Directory.Exists(__projectPath))
 					{
@@ -557,12 +557,12 @@ namespace Version
 							"{" + "\r\n" +
 							"  public final class " + settingObject.ClassName + "\r\n" +
 							"  {" + "\r\n" +
-							"      static public const Major:int = 1;" + "\r\n" +
-							"      static public const Minor:int = 0;" + "\r\n" +
-							"      static public const Build:int = 0;" + "\r\n" +
-							"      static public const Revision:int = " + __vRevision + "\r\n" +
-							"      static public const Timestamp:String = \"" + DateTime.Now + "\";" + "\r\n" +
-							"      static public const Author:String = \"" + CheckAuthorName() + "\";" + "\r\n" +
+							"      static public const Major:int = 1;\r\n" +
+							"      static public const Minor:int = 0;\r\n" +
+							"      static public const Build:int = 0;\r\n" +
+							"      static public const Revision:int = " + __vRevision + ";\r\n" +
+							"      static public const Timestamp:String = \"" + DateTime.Now + "\";\r\n" +
+							"      static public const Author:String = \"" + CheckAuthorName() + "\";\r\n" +
 							"  }" + "\r\n" +
 							"}";
 					if (!Directory.Exists(__projectPath))
@@ -806,6 +806,7 @@ namespace Version
         /// </summary>
         private void VersionChanged(string type)
         {
+			MessageBox.Show("VersionChanged: " + __vRevision);
             switch (type)
             {
                 case "TrackIt":
@@ -934,6 +935,7 @@ namespace Version
 					}
 					catch (SvnException ex)
 					{
+						MessageBox.Show(e.Message);
 						__vRevision = 0;
 						pluginUI.Revision.Text = "";
 					}
