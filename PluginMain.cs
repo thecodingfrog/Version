@@ -46,8 +46,9 @@ namespace Version
         private decimal __vBuild = 0;
         private int __vRevision = 0;
         private String __vAuthor;
-        private String __projectPath;
-        private String __packagePath;
+        private String __versionFilePath;
+		private String __packagePath;
+		private bool __isVersionned = false;
         private CompilationModes __lastAction;
 		private Language __language;
 
@@ -168,13 +169,14 @@ namespace Version
                     break;
                 case EventType.ProcessStart:
                     //MessageBox.Show("EventType.ProcessStart");
-                    if (settingObject.AutoIncrement
+					if (settingObject.AutoIncrement
+							&& __isVersionned
                             && (settingObject.CompilationMode == CompilationModes.Both
                                 || (settingObject.CompilationMode == CompilationModes.Build && __lastAction == CompilationModes.Build)
                                 || (settingObject.CompilationMode == CompilationModes.Test && __lastAction == CompilationModes.Test)
                             )
                         )
-                        IncrementVersion();
+						IncrementVersion();
                     break;
                 case EventType.ProcessEnd:
                     //MessageBox.Show("EventType.ProcessEnd");
@@ -182,6 +184,7 @@ namespace Version
                     //MessageBox.Show(hasNoCompilationError(res).ToString());
                     //MessageBox.Show(__lastAction.ToString());
                     if (!hasNoCompilationError(res)
+							&& __isVersionned
                             && settingObject.AutoIncrement
                             && (settingObject.CompilationMode == CompilationModes.Both
                                 || (settingObject.CompilationMode == CompilationModes.Build && __lastAction == CompilationModes.Build)
@@ -250,52 +253,31 @@ namespace Version
                 if (__ignoredProjectName.Split(splitchar)[0] == project.Name)
                 {
                     pluginUI.disableVersion();
+					__isVersionned = false;
                     return;
                 }
             }
-            
-            bool inTrackList = false;
 
-            foreach (string __trackedProject in this.settingObject.TrackedProjects)
-            {
-                if (__trackedProject.Split(splitchar)[0] == project.Name)
-                {
-                    pluginUI.enableVersion();
-                    inTrackList = true;
-                    __projectPath = __trackedProject.Split(splitchar)[1];
-                    break;
-                }
-            }
-			
-			//MessageBox.Show(inTrackList.ToString());
-            
-            if (!inTrackList)
-            {
-
-                string __foundVersionFilePath = FindVersionFile(GetPath());
-                if (__foundVersionFilePath != string.Empty)
-                {
-                    //MessageBox.Show(GetPath(__foundVersionFilePath));
-					trackProject(GetPath(__foundVersionFilePath));
-                }
-                else
-                {
-                    if (MessageBox.Show(String.Format(LocaleHelper.GetString("Info.TrackProject"), project.Name), LocaleHelper.GetString("Title.UnTrackedProject"), MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        trackProject(project, inTrackList);
-                    }
-                    else
-                    {
-                        ignoreProject(project);
-						if (File.Exists(__foundVersionFilePath))
-							File.Delete(__foundVersionFilePath);
-                    }
-                }
-            }
-            else
-            {
-                trackProject(project, inTrackList);
-            }
+			if (File.Exists(GetPath() + "\\obj\\Version.xml"))
+			{
+				pluginUI.enableVersion();
+				__isVersionned = true;
+			}
+			if (!__isVersionned)
+			{
+				if (MessageBox.Show(String.Format(LocaleHelper.GetString("Info.TrackProject"), project.Name), LocaleHelper.GetString("Title.UnTrackedProject"), MessageBoxButtons.YesNo) == DialogResult.Yes)
+				{
+					trackProject(project, __isVersionned);
+				}
+				else
+				{
+					ignoreProject(project);
+				}
+			}
+			else
+			{
+				trackProject(project, __isVersionned);
+			}
         }
 
         private void checkConsistency()
@@ -318,25 +300,6 @@ namespace Version
             this.settingObject.IgnoredProjects = new string[__tempArray.Length];
             __tempArray.CopyTo(this.settingObject.IgnoredProjects, 0);
             this.settingObject.Changed += SettingObjectChanged;
-
-            __size = this.settingObject.TrackedProjects.Length;
-            __tempArray = new string[0];
-            count = 0;
-
-            for (int i = 0; i < __size; i++)
-            {
-                if (this.settingObject.TrackedProjects[i] != string.Empty)
-                {
-                    count++;
-                    Array.Resize<string>(ref __tempArray, count);
-                    __tempArray.SetValue(this.settingObject.TrackedProjects[i], count - 1);
-                }
-            }
-
-            this.settingObject.Changed -= SettingObjectChanged;
-            this.settingObject.TrackedProjects = new string[__tempArray.Length];
-            __tempArray.CopyTo(this.settingObject.TrackedProjects, 0);
-            this.settingObject.Changed += SettingObjectChanged;
         }
 
         /// <summary>
@@ -346,66 +309,58 @@ namespace Version
         private void ignoreProject(IProject project)
         {
             pluginUI.disableVersion();
+			__isVersionned = false;
             string[] tempIgnoredProjects = new string[this.settingObject.IgnoredProjects.Length + 1];
             this.settingObject.IgnoredProjects.CopyTo(tempIgnoredProjects, 0);
             tempIgnoredProjects.SetValue(project.Name, this.settingObject.IgnoredProjects.Length);
             this.settingObject.IgnoredProjects = tempIgnoredProjects;
         }
 
-        /// <summary>
-        /// Tracks the project.
-        /// </summary>
-        /// <param name="project">The project.</param>
-        /// <param name="inTrackList">if set to <c>true</c> [in track list].</param>
-        private void trackProject(string __path)
-        {
-            pluginUI.enableVersion();
-
-            string[] tempTrackedProjects = new string[this.settingObject.TrackedProjects.Length + 1];
-            this.settingObject.TrackedProjects.CopyTo(tempTrackedProjects, 0);
-			tempTrackedProjects.SetValue(PluginBase.CurrentProject.Name + ";" + __path, this.settingObject.TrackedProjects.Length);
-            this.settingObject.TrackedProjects = tempTrackedProjects;
-			CheckVersionFile();
-        }
-
-        private void trackProject(IProject project, bool inTrackList)
+        private void trackProject(IProject project, bool versionned)
         {
 			string __path;
 
             pluginUI.enableVersion();
-                    
-            if (!inTrackList)
+
+			if (!versionned)
             {
                 PathEntryDialog prompt;
-                if (PluginBase.CurrentProject.SourcePaths.Length > 0)
-                {
-                    prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]), LocaleHelper.GetString("Info.Package"));
+				if (PluginBase.CurrentProject.SourcePaths.Length > 0)
+				{
+					prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]), LocaleHelper.GetString("Info.Package"));
 					__path = PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.SourcePaths[0]);
-                }
-                else
-                {
-                    //MessageBox.Show(PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.ProjectPath).ToString());
-                    int __pos = PluginBase.CurrentProject.ProjectPath.LastIndexOf("\\");
-                    __path = PluginBase.CurrentProject.ProjectPath.Substring(0, __pos + 1);
-                    //MessageBox.Show(__path);
-                    prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), __path, LocaleHelper.GetString("Info.Package"));
-                }
+				}
+				else
+				{
+					//MessageBox.Show(PluginBase.CurrentProject.GetAbsolutePath(PluginBase.CurrentProject.ProjectPath).ToString());
+					int __pos = PluginBase.CurrentProject.ProjectPath.LastIndexOf("\\");
+					__path = PluginBase.CurrentProject.ProjectPath.Substring(0, __pos + 1);
+					//MessageBox.Show(__path);
+					prompt = new PathEntryDialog(LocaleHelper.GetString("Title.ProjectPath"), LocaleHelper.GetString("Info.Path"), LocaleHelper.GetString("Info.Relative"), __path, LocaleHelper.GetString("Info.Package"));
+				}
                 if (prompt.ShowDialog() == DialogResult.OK)
                 {
-                    string[] tempTrackedProjects = new string[this.settingObject.TrackedProjects.Length + 1];
-                    this.settingObject.TrackedProjects.CopyTo(tempTrackedProjects, 0);
-                    
-                    __projectPath = (prompt.RelativePath) ? __path + "\\" + prompt.ProjectPath : prompt.ProjectPath;
-                    
+                    //string[] tempTrackedProjects = new string[this.settingObject.TrackedProjects.Length + 1];
+                    //this.settingObject.TrackedProjects.CopyTo(tempTrackedProjects, 0);
+
+					__versionFilePath = (prompt.RelativePath) ? prompt.ProjectPath : prompt.ProjectPath.Substring(GetPath().Length-1);
+					if (__versionFilePath == "")
+						__versionFilePath = __path.Substring(GetPath().Length - 1);
+
+					__versionFilePath = __versionFilePath.Replace("\\", "/");
+					//MessageBox.Show(__versionFilePath);
+
                     __packagePath = prompt.PackagePath;
 
-                    tempTrackedProjects.SetValue(project.Name + ";" + __projectPath, this.settingObject.TrackedProjects.Length);
-                    this.settingObject.TrackedProjects = tempTrackedProjects;
+                    //tempTrackedProjects.SetValue(project.Name + ";" + __versionFilePath, this.settingObject.TrackedProjects.Length);
+                    //this.settingObject.TrackedProjects = tempTrackedProjects;
                     
-                    if (!Directory.Exists(__projectPath))
+                    if (!Directory.Exists(__versionFilePath))
                     {
-                        Directory.CreateDirectory(__projectPath);
+                        Directory.CreateDirectory(__versionFilePath);
                     }
+
+					__isVersionned = true;
                 }
             }
             CheckVersionFile();
@@ -445,145 +400,17 @@ namespace Version
 
             __vAuthor = CheckAuthorName();
 
-            checkSVN();
-
-			switch (__project.Language)
+            switch (__project.Language)
 			{
 				case "as2":
-					CheckAS2VersionFile();
 					__language = Language.AS2;
 					break;
 				case "as3":
-					CheckAS3VersionFile();
 					__language = Language.AS3;
 					break;
 			}
-            
-            this.pluginUI.Changed -= VersionChanged;
-            this.pluginUI.Major = __vMajor;
-            this.pluginUI.Minor = __vMinor;
-            this.pluginUI.Build = __vBuild;
-            this.pluginUI.Changed += VersionChanged;
-		}
-
-		private void CheckAS2VersionFile()
-		{
-			Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
-			//MessageBox.Show(__projectPath + "\\" + settingObject.ClassName + ".as");
-			if (!File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
-			{
-				if (File.Exists(__projectPath + "\\" + settingObject.OldClassName + ".as") && settingObject.ClassName != settingObject.OldClassName)
-				{
-					File.Move(__projectPath + "\\" + settingObject.OldClassName + ".as", __projectPath + "\\" + settingObject.ClassName + ".as");
-					string sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-
-					RegexOptions options = new RegexOptions();
-					options |= RegexOptions.Multiline;
-					options |= RegexOptions.IgnoreCase;
-
-					sVersionContent = Regex.Replace(sVersionContent, @"class " + settingObject.OldClassName, "class " + settingObject.ClassName, options);
-					if (!Directory.Exists(__projectPath))
-					{
-						Directory.CreateDirectory(__projectPath);
-					}
-					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-					
-					__vMajor = decimal.Parse(getValue(sVersionContent, @"static public var Major:Number = (\d+);"));
-					__vMinor = decimal.Parse(getValue(sVersionContent, @"static public var Minor:Number = (\d+);"));
-					__vBuild = decimal.Parse(getValue(sVersionContent, @"static public var Build:Number = (\d+);"));
-				}
-				else
-				{
-					string sVersionContent = "class " + BuildPackagePath(__packagePath) + settingObject.ClassName + "\r\n" +
-							"{" + "\r\n" +
-							"	static public var Major:Number = 1;\r\n" +
-							"	static public var Minor:Number = 0;\r\n" +
-							"	static public var Build:Number = 0;\r\n" +
-							"	static public var Revision:Number = " + __vRevision + ";\r\n" +
-							"	static public var Timestamp:String = \"" + DateTime.Now + "\";\r\n" +
-							"	static public var Author:String = \"" + CheckAuthorName() + "\";\r\n" +
-							"}";
-					if (!Directory.Exists(__projectPath))
-					{
-						Directory.CreateDirectory(__projectPath);
-					}
-					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-					
-					__vMajor = 1;
-					__vMinor = 0;
-					__vBuild = 0;
-				}
-			}
-			else
-			{
-				String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-
-				__vMajor = decimal.Parse(getValue(sVersionContent, @"static public var Major:Number = (\d+);"));
-				__vMinor = decimal.Parse(getValue(sVersionContent, @"static public var Minor:Number = (\d+);"));
-				__vBuild = decimal.Parse(getValue(sVersionContent, @"static public var Build:Number = (\d+);"));
-			}
-		}
-
-		private void CheckAS3VersionFile()
-		{
-			Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
-			//MessageBox.Show(__projectPath + "\\" + settingObject.ClassName + ".as");
-
-			if (!File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
-			{
-				if (File.Exists(__projectPath + "\\" + settingObject.OldClassName + ".as") && settingObject.ClassName != settingObject.OldClassName)
-				{
-					File.Move(__projectPath + "\\" + settingObject.OldClassName + ".as", __projectPath + "\\" + settingObject.ClassName + ".as");
-					string sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-
-					RegexOptions options = new RegexOptions();
-					options |= RegexOptions.Multiline;
-					options |= RegexOptions.IgnoreCase;
-
-					sVersionContent = Regex.Replace(sVersionContent, @"public final class " + settingObject.OldClassName, "public final class " + settingObject.ClassName, options);
-					if (!Directory.Exists(__projectPath))
-					{
-						Directory.CreateDirectory(__projectPath);
-					}
-					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-					
-					__vMajor = decimal.Parse(getValue(sVersionContent, @"static public const Major:int = (\d+);"));
-					__vMinor = decimal.Parse(getValue(sVersionContent, @"static public const Minor:int = (\d+);"));
-					__vBuild = decimal.Parse(getValue(sVersionContent, @"static public const Build:int = (\d+);"));
-				}
-				else
-				{
-					string sVersionContent = "package " + __packagePath + "\r\n" +
-							"{" + "\r\n" +
-							"  public final class " + settingObject.ClassName + "\r\n" +
-							"  {" + "\r\n" +
-							"      static public const Major:int = 1;\r\n" +
-							"      static public const Minor:int = 0;\r\n" +
-							"      static public const Build:int = 0;\r\n" +
-							"      static public const Revision:int = " + __vRevision + ";\r\n" +
-							"      static public const Timestamp:String = \"" + DateTime.Now + "\";\r\n" +
-							"      static public const Author:String = \"" + CheckAuthorName() + "\";\r\n" +
-							"  }" + "\r\n" +
-							"}";
-					if (!Directory.Exists(__projectPath))
-					{
-						Directory.CreateDirectory(__projectPath);
-					}
-					FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-					
-					__vMajor = 1;
-					__vMinor = 0;
-					__vBuild = 0;
-				}
-			}
-			else
-			{
-				String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-
-				__vMajor = decimal.Parse(getValue(sVersionContent, @"static public const Major:int = (\d+);"));
-				__vMinor = decimal.Parse(getValue(sVersionContent, @"static public const Minor:int = (\d+);"));
-				__vBuild = decimal.Parse(getValue(sVersionContent, @"static public const Build:int = (\d+);"));
-			}
+			ReadVersion();
+			checkSVN();
 		}
 
         /// <summary>
@@ -824,46 +651,9 @@ namespace Version
                     __vMajor = pluginUI.Major;
                     __vMinor = pluginUI.Minor;
                     __vBuild = pluginUI.Build;
-					//MessageBox.Show("here");
-                    if (File.Exists(__projectPath + "\\" + settingObject.ClassName + ".as"))
-                    {
-                        String sVersionContent = File.ReadAllText(__projectPath + "\\" + settingObject.ClassName + ".as");
-                        RegexOptions options = new RegexOptions();
-                        options |= RegexOptions.Multiline;
-                        options |= RegexOptions.IgnoreCase;
 
-						if (__language == Language.AS3)
-						{
-							sVersionContent = Regex.Replace(sVersionContent, @"static public const Major:int = (\d+);", "static public const Major:int = " + __vMajor + ";", options);
-							sVersionContent = Regex.Replace(sVersionContent, @"static public const Minor:int = (\d+);", "static public const Minor:int = " + __vMinor + ";", options);
-							sVersionContent = Regex.Replace(sVersionContent, @"static public const Build:int = (\d+);", "static public const Build:int = " + __vBuild + ";", options);
-							sVersionContent = Regex.Replace(sVersionContent, @"static public const Revision:int = (\d+);", "static public const Revision:int = " + __vRevision + ";", options);
-
-							String pattern = @"static public const Timestamp:String = ""(.*)"";";
-							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Timestamp:String = \"" + DateTime.Now + "\";", options);
-
-							pattern = @"static public const Author:String = ""(\.*|\w*)"";";
-							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public const Author:String = \"" + __vAuthor + "\";", options);
-						}
-						if (__language == Language.AS2)
-						{
-							sVersionContent = Regex.Replace(sVersionContent, @"static public var Major:Number = (\d+);", "static public var Major:Number = " + __vMajor + ";", options);
-							sVersionContent = Regex.Replace(sVersionContent, @"static public var Minor:Number = (\d+);", "static public var Minor:Number = " + __vMinor + ";", options);
-							sVersionContent = Regex.Replace(sVersionContent, @"static public var Build:Number = (\d+);", "static public var Build:Number = " + __vBuild + ";", options);
-							sVersionContent = Regex.Replace(sVersionContent, @"static public var Revision:Number = (\d+);", "static public var Revision:Number = " + __vRevision + ";", options);
-
-							String pattern = @"static public var Timestamp:String = ""(.*)"";";
-							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public var Timestamp:String = \"" + DateTime.Now + "\";", options);
-
-							pattern = @"static public var Author:String = ""(\.*|\w*)"";";
-							sVersionContent = Regex.Replace(sVersionContent, pattern, "static public var Author:String = \"" + __vAuthor + "\";", options);
-						}
-						if (!Directory.Exists(__projectPath))
-						{
-							Directory.CreateDirectory(__projectPath);
-						}
-						FileHelper.WriteFile(__projectPath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
-                    }
+					SaveVersion();
+					CreateVersionFile(__vMajor, __vMinor, __vBuild, __vRevision, DateTime.Now, __vAuthor);
 
                     string __projectBaseDir = PluginBase.CurrentProject.ProjectPath;
                     if (__projectBaseDir.IndexOf("\\") > -1)
@@ -889,7 +679,7 @@ namespace Version
                     }
                     break;
             }
-
+			
         }
 
 		private string GetNamespaceVersion(XmlDocument __xmlDoc)
@@ -907,6 +697,117 @@ namespace Version
 			return __result;
 		}
 
+		private void ReadVersion()
+		{
+			if (!File.Exists(GetPath() + "\\obj\\Version.xml"))
+			{
+				__vMajor = 1;
+				__vMinor = 0;
+				__vBuild = 0;
+				SaveVersion();
+			}
+			else
+			{
+				__vAuthor = CheckAuthorName();
+				//XmlTextReader __xmlTR = new XmlTextReader(GetPath() + "\\obj\\version.xml");
+				//__xmlTR.MoveToElement
+				XmlDocument __xmlDoc = new XmlDocument();
+				__xmlDoc.Load(GetPath() + "\\obj\\Version.xml");
+
+				XmlNode __root = __xmlDoc.DocumentElement;
+				
+				XmlNode __nodeversion = __root.SelectSingleNode("//version");
+				__versionFilePath = __nodeversion.Attributes[0].Value;
+				//MessageBox.Show(__versionFilePath);
+
+				XmlNode __nodeMajor = __root.SelectSingleNode("//major");
+				__vMajor = Convert.ToDecimal(__nodeMajor.InnerText);
+
+				XmlNode __nodeMinor = __root.SelectSingleNode("//minor");
+				__vMinor = Convert.ToDecimal(__nodeMinor.InnerText);
+
+				XmlNode __nodeBuild = __root.SelectSingleNode("//build");
+				__vBuild = Convert.ToDecimal(__nodeBuild.InnerText);
+				//MessageBox.Show(__nodeMajor.InnerText.ToString());
+
+				checkSVN();
+			}
+
+			this.pluginUI.Changed -= VersionChanged;
+			this.pluginUI.Major = __vMajor;
+			this.pluginUI.Minor = __vMinor;
+			this.pluginUI.Build = __vBuild;
+			this.pluginUI.Changed += VersionChanged;
+
+		}
+
+		private void SaveVersion()
+		{
+			if (!Directory.Exists(GetPath() + "\\obj"))
+				Directory.CreateDirectory(GetPath() + "\\obj");
+
+			XmlTextWriter __xmlTW = new XmlTextWriter(GetPath() + "\\obj\\Version.xml", null);
+			__xmlTW.Formatting = Formatting.Indented;
+			__xmlTW.WriteStartDocument(false);
+			__xmlTW.WriteStartElement("version");
+			__xmlTW.WriteAttributeString("path", __versionFilePath);
+			__xmlTW.WriteElementString("major", __vMajor.ToString());
+			__xmlTW.WriteElementString("minor", __vMinor.ToString());
+			__xmlTW.WriteElementString("build", __vBuild.ToString());
+			__xmlTW.WriteElementString("revision", __vRevision.ToString());
+			__xmlTW.WriteElementString("author", __vAuthor);
+			__xmlTW.WriteElementString("timestamp", DateTime.Now.ToString());
+			__xmlTW.WriteEndElement();
+			__xmlTW.Flush();
+			__xmlTW.Close();
+			if (__xmlTW != null)
+				__xmlTW.Close();
+
+		}
+
+		private void CreateVersionFile(decimal major, decimal minor, decimal build, int revision, DateTime timestamp, string author)
+		{
+			Encoding __encoding = Encoding.GetEncoding((Int32)PluginCore.PluginBase.Settings.DefaultCodePage);
+			string sVersionContent = string.Empty;
+			//MessageBox.Show(__language.ToString());
+			switch (__language)
+			{
+				case Language.AS2:
+					sVersionContent = "class " + BuildPackagePath(__packagePath) + settingObject.ClassName + "\r\n" +
+						"{" + "\r\n" +
+						"	static public var Major:Number = " + major + ";\r\n" +
+						"	static public var Minor:Number = " + minor + ";\r\n" +
+						"	static public var Build:Number = " + build + ";\r\n" +
+						"	static public var Revision:Number = " + revision + ";\r\n" +
+						"	static public var Timestamp:String = \"" + timestamp.ToString() + "\";\r\n" +
+						"	static public var Author:String = \"" + author + "\";\r\n" +
+						"}";
+					break;
+				case Language.AS3:
+				default:
+					sVersionContent = "package " + __packagePath + "\r\n" +
+						 "{" + "\r\n" +
+						 "  public final class " + settingObject.ClassName + "\r\n" +
+						 "  {" + "\r\n" +
+						 "      static public const Major:int = " + major + ";\r\n" +
+						 "      static public const Minor:int = " + minor + ";\r\n" +
+						 "      static public const Build:int = " + build + ";\r\n" +
+						 "      static public const Revision:int = " + revision + ";\r\n" +
+						 "      static public const Timestamp:String = \"" + timestamp + "\";\r\n" +
+						 "      static public const Author:String = \"" + author + "\";\r\n" +
+						 "  }" + "\r\n" +
+						 "}";
+					break;
+			}
+
+
+			if (!Directory.Exists(GetPath() + __versionFilePath))
+			{
+				Directory.CreateDirectory(GetPath() + __versionFilePath);
+			}
+			FileHelper.WriteFile(GetPath() + __versionFilePath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
+		}
+
 
         /// <summary>
         /// Checks the SVN.
@@ -916,11 +817,11 @@ namespace Version
 			SvnClient __svnClient = new SvnClient();
             SvnInfoEventArgs __sieaInfo;
             bool __getInfo;
-            if (__projectPath != "")
+            if (__versionFilePath != "")
             {
 				try
 				{
-					__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath + "\\" + settingObject.ClassName + ".as"), out __sieaInfo);
+					__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__versionFilePath + "\\" + settingObject.ClassName + ".as"), out __sieaInfo);
 					pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
 					__vRevision = (int)__sieaInfo.LastChangeRevision;
 				}
@@ -928,7 +829,7 @@ namespace Version
 				{
 					try
 					{
-						__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__projectPath), out __sieaInfo);
+						__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(__versionFilePath), out __sieaInfo);
 						pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
 						__vRevision = (int)__sieaInfo.LastChangeRevision;
 					}

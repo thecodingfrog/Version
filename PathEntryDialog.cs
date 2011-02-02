@@ -16,6 +16,7 @@ namespace Version.Helpers
         string __RelativeProjectPath = "";
         string __ProjectPath;
         string __PackagePath;
+		string __PathTitle;
         bool __RelativePath = false;
 
 		#region Form Designer Components
@@ -66,6 +67,7 @@ namespace Version.Helpers
 
 			this.Text = " " + captionText;
             pathLabel.Text = pathTitle;
+			__PathTitle = pathTitle;
             __AbsoluteProjectPath = defaultPath;
             pathTextBox.Text = (defaultPath != null) ? defaultPath : string.Empty;
 			pathTextBox.SelectAll();
@@ -315,11 +317,13 @@ namespace Version.Helpers
         {
             if (checkBox1.Checked)
             {
+				pathLabel.Text = "Relative to: " + __AbsoluteProjectPath;
                 pathTextBox.Text = __RelativeProjectPath;
                 __RelativePath = true;
             }
             else
             {
+				pathLabel.Text = __PathTitle;
                 pathTextBox.Text = __AbsoluteProjectPath;
                 __RelativePath = false;
             }
