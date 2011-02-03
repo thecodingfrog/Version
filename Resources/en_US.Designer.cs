@@ -61,7 +61,7 @@ namespace Version.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} current version.
+        ///   Looks up a localized string similar to Current version.
         /// </summary>
         internal static string Info_CurrentVersion {
             get {

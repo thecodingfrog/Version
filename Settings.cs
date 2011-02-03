@@ -13,8 +13,8 @@ namespace Version
     public enum CompilationModes
     {
         Both = 0,
-        Build = 1,
-        Test = 2
+        BuildProject = 1,
+        TestMovie = 2
     }
 
     [Serializable]
@@ -32,7 +32,6 @@ namespace Version
         private Keys __versionShortcut = DEFAULT_SHORTCUT;
         private bool __autoIncrement = DEFAULT_AUTOINCREMENT;
         private CompilationModes __compilationMode = DEFAULT_COMPILATIONMODE;
-        private string[] __trackedProjects = new string[] { };
         private string[] __ignoredProjects = new string[] { };
 
         [Browsable(false)]
@@ -64,20 +63,6 @@ namespace Version
         {
             get { return this.__versionShortcut; }
             set { this.__versionShortcut = value; }
-        }
-
-        /// <summary> 
-        /// Get and sets the trackedProjects
-        /// </summary>
-        [DisplayName("Tracked Projects")]
-        public string[] TrackedProjects
-        {
-            get { return this.__trackedProjects; }
-            set
-            {
-                this.__trackedProjects = value;
-                FireChanged("trackedProjects");
-            }
         }
 
         /// <summary> 

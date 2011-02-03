@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 2.0.87 - February 3, 2011
+      * major changes in holding config data, now in seperate xml file
+
      / 1.0.336 - February 1, 2011
       * bug fix in writting revision data
       
