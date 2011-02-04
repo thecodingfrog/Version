@@ -115,7 +115,7 @@ namespace Version.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Path.
+        ///   Looks up a localized string similar to Path: .
         /// </summary>
         internal static string Info_Path {
             get {
@@ -169,7 +169,7 @@ namespace Version.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Project path.
+        ///   Looks up a localized string similar to Path to {0} file.
         /// </summary>
         internal static string Title_ProjectPath {
             get {

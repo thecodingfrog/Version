@@ -35,6 +35,10 @@ Known Bugs/Issues
 
 Version History
 
+     / 2.0.102 - February 4, 2011
+      * bug fix in package not saved to xml
+      * path entry dialog simplified
+
      / 2.0.87 - February 3, 2011
       * major changes in holding config data, now in seperate xml file
 

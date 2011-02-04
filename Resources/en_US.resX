@@ -136,7 +136,7 @@
     <value>Package</value>
   </data>
   <data name="Info.Path" xml:space="preserve">
-    <value>Path</value>
+    <value>Path: </value>
   </data>
   <data name="Info.Relative" xml:space="preserve">
     <value>Relative</value>
@@ -154,7 +154,7 @@
     <value>Version</value>
   </data>
   <data name="Title.ProjectPath" xml:space="preserve">
-    <value>Project path</value>
+    <value>Path to {0} file</value>
   </data>
   <data name="Title.SVNCheckButton" xml:space="preserve">
     <value>Get SVN revision (no update)</value>
