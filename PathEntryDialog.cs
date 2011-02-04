@@ -59,7 +59,7 @@ namespace Version.Helpers
 			__ProjectPath = projectPath;
 			__SourcePath = sourcePath;
 
-			__RelativeProjectPath = __SourcePath.Substring(__ProjectPath.Length);
+			//__RelativeProjectPath = __SourcePath.Substring(__ProjectPath.Length);
 
 			this.Text = captionText;
 			pathLabel.Text = pathTitle + __SourcePath;
@@ -246,15 +246,18 @@ namespace Version.Helpers
         {
 			string __path = pathTextBox.Text.Replace("/", "\\");
 
+			__RelativeProjectPath = __path;
+
 			packageTextBox.Text = FormatPackage(__path);
 
-			if (__path.Length > 0 && !__path.StartsWith("\\"))
-				__path = "\\" + __path;
-			if (!__path.EndsWith("\\"))
-				__path += "\\";
+			if (__RelativeProjectPath.Length > 0 && !__RelativeProjectPath.StartsWith("\\"))
+				__RelativeProjectPath = "\\" + __RelativeProjectPath;
+			if (!__RelativeProjectPath.EndsWith("\\"))
+				__RelativeProjectPath += "\\";
 
-			pathLabel.Text = __PathTitle + __SourcePath + __path;
-			__RelativeProjectPath = __path.Replace("\\", "/");
+			__RelativeProjectPath = __RelativeProjectPath.Replace("\\", "/");
+			pathLabel.Text = __PathTitle + __SourcePath + __RelativeProjectPath;
+			//MessageBox.Show(__RelativeProjectPath);
 			
         }
 

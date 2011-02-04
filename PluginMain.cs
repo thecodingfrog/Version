@@ -283,7 +283,7 @@ namespace Version
 					pluginUI.enableVersion();
 					__isVersionned = true;
 					ReadVersionFile(__foundVersionFilePath);
-					__versionFilePath = __foundVersionFilePath.Substring(GetPath().Length - 1);
+					__versionFilePath = __foundVersionFilePath.Substring(GetSourcePath().Length);
 					if (__versionFilePath.IndexOf(settingObject.ClassName + ".as") > -1)
 					{
 						__versionFilePath = __versionFilePath.Substring(0, __versionFilePath.Length - (settingObject.ClassName + ".as").Length);
@@ -378,9 +378,6 @@ namespace Version
 					//this.settingObject.TrackedProjects.CopyTo(tempTrackedProjects, 0);
 
 					__versionFilePath = prompt.RelativePath;
-					if (__versionFilePath == "")
-						__versionFilePath = __sourcePath.Substring(GetPath().Length - 1);
-
 					__versionFilePath = __versionFilePath.Replace("\\", "/");
 					//MessageBox.Show(__versionFilePath);
 
@@ -845,6 +842,7 @@ namespace Version
 			{
 				Directory.CreateDirectory(GetSourcePath() + __versionFilePath);
 			}
+			//MessageBox.Show(GetPath() + __versionFilePath);
 			FileHelper.WriteFile(GetSourcePath() + __versionFilePath + "\\" + settingObject.ClassName + ".as", sVersionContent, __encoding, PluginCore.PluginBase.Settings.SaveUnicodeWithBOM);
 		}
 
@@ -937,6 +935,7 @@ namespace Version
 			{
 				__sourcePath = GetPath();
 			}
+			//MessageBox.Show(__sourcePath);
 
 			return __sourcePath;
 		}
