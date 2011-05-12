@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 2.0.106 - May 12, 2011
+      * change static public to public static
+
      / 2.0.102 - February 4, 2011
       * bug fix in package not saved to xml
       * path entry dialog simplified

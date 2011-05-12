@@ -419,7 +419,12 @@ namespace Version
         /// <param name="content">The content.</param>
         /// <param name="pattern">The pattern.</param>
         /// <returns></returns>
-        private string getValue(String __content, String __pattern)
+		private string getValue(String __content, String __pattern)
+		{
+			return getValue(__content, __pattern, 0);
+		}
+
+        private string getValue(String __content, String __pattern, int __idx)
         {
 			MatchCollection __matches = Regex.Matches(__content, __pattern);
             //pluginUI.Debug.Text += "matches: " + mMatches.Count + "\n";
@@ -428,7 +433,7 @@ namespace Version
 			{
 				GroupCollection __gc = __matches[0].Groups;
 				CaptureCollection __cc = __gc[1].Captures;
-				return __cc[0].Value;
+				return __cc[__idx].Value;
 			}
 			else
 			{
@@ -787,12 +792,12 @@ namespace Version
 				case Language.AS2:
 					sVersionContent = "class " + BuildAS2PackagePath(__packagePath) + settingObject.ClassName + "\r\n" +
 						"{" + "\r\n" +
-						"	static public var Major:Number = " + major + ";\r\n" +
-						"	static public var Minor:Number = " + minor + ";\r\n" +
-						"	static public var Build:Number = " + build + ";\r\n" +
-						"	static public var Revision:Number = " + revision + ";\r\n" +
-						"	static public var Timestamp:String = \"" + timestamp.ToString() + "\";\r\n" +
-						"	static public var Author:String = \"" + author + "\";\r\n" +
+						"	public static var Major:Number = " + major + ";\r\n" +
+						"	public static var Minor:Number = " + minor + ";\r\n" +
+						"	public static var Build:Number = " + build + ";\r\n" +
+						"	public static var Revision:Number = " + revision + ";\r\n" +
+						"	public static var Timestamp:String = \"" + timestamp.ToString() + "\";\r\n" +
+						"	public static var Author:String = \"" + author + "\";\r\n" +
 						"}";
 					break;
 				case Language.AS3:
@@ -801,12 +806,12 @@ namespace Version
 						 "{" + "\r\n" +
 						 "  public final class " + settingObject.ClassName + "\r\n" +
 						 "  {" + "\r\n" +
-						 "      static public const Major:int = " + major + ";\r\n" +
-						 "      static public const Minor:int = " + minor + ";\r\n" +
-						 "      static public const Build:int = " + build + ";\r\n" +
-						 "      static public const Revision:int = " + revision + ";\r\n" +
-						 "      static public const Timestamp:String = \"" + timestamp + "\";\r\n" +
-						 "      static public const Author:String = \"" + author + "\";\r\n" +
+						 "      public static const Major:int = " + major + ";\r\n" +
+						 "      public static const Minor:int = " + minor + ";\r\n" +
+						 "      public static const Build:int = " + build + ";\r\n" +
+						 "      public static const Revision:int = " + revision + ";\r\n" +
+						 "      public static const Timestamp:String = \"" + timestamp + "\";\r\n" +
+						 "      public static const Author:String = \"" + author + "\";\r\n" +
 						 "  }" + "\r\n" +
 						 "}";
 					break;
@@ -831,16 +836,16 @@ namespace Version
 			{
 				case Language.AS2:
 					__packagePath = getValue(__fileContent, @"class ([\w.]*)" + settingObject.ClassName);
-					__vMajor = decimal.Parse(getValue(__fileContent, @"static public var Major:Number = (\d+);"));
-					__vMinor = decimal.Parse(getValue(__fileContent, @"static public var Minor:Number = (\d+);"));
-					__vBuild = decimal.Parse(getValue(__fileContent, @"static public var Build:Number = (\d+);"));
+					__vMajor = decimal.Parse(getValue(__fileContent, @"(static public|public static) var Major:Number = (\d+);", 1));
+					__vMinor = decimal.Parse(getValue(__fileContent, @"(static public|public static) var Minor:Number = (\d+);", 1));
+					__vBuild = decimal.Parse(getValue(__fileContent, @"(static public|public static) var Build:Number = (\d+);", 1));
 					break;
 				case Language.AS3:
 				default:
 					__packagePath = getValue(__fileContent, @"package ([\w.]*)");
-					__vMajor = decimal.Parse(getValue(__fileContent, @"static public const Major:int = (\d+);"));
-					__vMinor = decimal.Parse(getValue(__fileContent, @"static public const Minor:int = (\d+);"));
-					__vBuild = decimal.Parse(getValue(__fileContent, @"static public const Build:int = (\d+);"));
+					__vMajor = decimal.Parse(getValue(__fileContent, @"(static public|public static) const Major:int = (\d+);", 1));
+					__vMinor = decimal.Parse(getValue(__fileContent, @"(static public|public static) const Minor:int = (\d+);", 1));
+					__vBuild = decimal.Parse(getValue(__fileContent, @"(static public|public static) const Build:int = (\d+);", 1));
 					break;
 			}			
 		}
