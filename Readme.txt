@@ -24,7 +24,7 @@ Thanks in advance to anyone who tries it out!
 
 Tested on FlashDevelop versions:
 
-    * 3.3.2 RTM
+    * 4.0 Beta
 
 
 Known Bugs/Issues
@@ -34,6 +34,9 @@ Known Bugs/Issues
 
 
 Version History
+
+     / 3.0.112 - July 5, 2011
+      * Update to v3 for FlashDevelop 4
 
      / 2.0.106 - May 12, 2011
       * change static public to public static

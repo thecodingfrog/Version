@@ -54,7 +54,15 @@ namespace Version
 
 	    #region Required Properties
 
-        /// <summary>
+		/// <summary>
+		/// Api level of the plugin
+		/// </summary>
+		public Int32 Api
+		{
+			get { return 1; }
+		}
+		
+		/// <summary>
         /// Name of the plugin
         /// </summary> 
         public String Name
@@ -627,7 +635,7 @@ namespace Version
         /// <returns></returns>
         public String CheckAuthorName()
         {
-            foreach (Argument arg in PluginBase.Settings.CustomArguments)
+            foreach (Argument arg in PluginBase.MainForm.CustomArguments)
             {
                 if (arg.Key == "DefaultUser")
                 {
