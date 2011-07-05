@@ -74,6 +74,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompileDate.cs" />
     <Compile Include="PathEntryDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,7 +111,7 @@
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="False" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
@@ -118,5 +119,6 @@
 "C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)Version.zip $(TargetPath) $(projectDir)Readme.txt $(projectDir)SharpSvn.dll
 COPY $(TargetPath) "R:\JLP\FD\"
 REM "C:\Program Files (x86)\FlashDevelop\Tools\VerHeader.exe" "C:\Program Files (x86)\FlashDevelop\Plugins\$(TargetFileName)" $(projectDir)Version.zip</PostBuildEvent>
+    <PreBuildEvent>"C:\Program Files (x86)\Microsoft Visual Studio 9.0\pre-build.vbs" $(ProjectExt) $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>
