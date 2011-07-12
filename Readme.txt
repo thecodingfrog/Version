@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 3.0.114 - July 12, 2011
+      * change to support new Air version number attribute
+
      / 3.0.112 - July 5, 2011
       * Update to v3 for FlashDevelop 4
 

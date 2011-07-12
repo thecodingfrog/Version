@@ -785,6 +785,11 @@ namespace Version
 					{
 						__nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __vBuild;
 					}
+					__nodeVersion = __root.SelectSingleNode("/air:application/air:versionNumber", __NsMgr);
+					if (__nodeVersion != null)
+					{
+						__nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __vBuild;
+					}
 					__xmlDoc.Save(__projectBaseDir + "\\application.xml");
 				}
 			}
