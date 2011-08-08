@@ -33,7 +33,7 @@ namespace Version
 		private String pluginName = "Version";
         private String pluginGuid = "F55FB962-3F2E-4575-845F-2FFAB8A0CC56";
         private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Version number plugin for FlashDevelop 3";
+        private String pluginDesc = "Version number plugin for FlashDevelop 4";
         private String pluginAuth = "Jean-Louis PERSAT";
         private String settingFilename;
         private String settingBackup;
