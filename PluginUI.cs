@@ -174,6 +174,7 @@ namespace Version
         {
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label4 = new System.Windows.Forms.Label();
+			this.buttonSVNCheck = new System.Windows.Forms.Button();
 			this.vRevision = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.vMajor = new System.Windows.Forms.NumericUpDown();
@@ -183,7 +184,6 @@ namespace Version
 			this.vBuild = new System.Windows.Forms.NumericUpDown();
 			this.NotTracked = new System.Windows.Forms.LinkLabel();
 			this.tbDebug = new System.Windows.Forms.RichTextBox();
-			this.buttonSVNCheck = new System.Windows.Forms.Button();
 			this.CheckVersion = new System.Windows.Forms.LinkLabel();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.vMajor)).BeginInit();
@@ -220,6 +220,16 @@ namespace Version
 			this.label4.Size = new System.Drawing.Size(48, 13);
 			this.label4.TabIndex = 20;
 			this.label4.Text = "Revision";
+			// 
+			// buttonSVNCheck
+			// 
+			this.buttonSVNCheck.Location = new System.Drawing.Point(14, 57);
+			this.buttonSVNCheck.Name = "buttonSVNCheck";
+			this.buttonSVNCheck.Size = new System.Drawing.Size(223, 25);
+			this.buttonSVNCheck.TabIndex = 9;
+			this.buttonSVNCheck.Text = "Read SVN revision (no update)";
+			this.buttonSVNCheck.UseVisualStyleBackColor = true;
+			this.buttonSVNCheck.Click += new System.EventHandler(this.buttonSVNCheck_Click);
 			// 
 			// vRevision
 			// 
@@ -341,26 +351,18 @@ namespace Version
 			this.tbDebug.Text = "";
 			this.tbDebug.Visible = false;
 			// 
-			// buttonSVNCheck
-			// 
-			this.buttonSVNCheck.Location = new System.Drawing.Point(14, 57);
-			this.buttonSVNCheck.Name = "buttonSVNCheck";
-			this.buttonSVNCheck.Size = new System.Drawing.Size(223, 25);
-			this.buttonSVNCheck.TabIndex = 9;
-			this.buttonSVNCheck.Text = "Read SVN revision (no update)";
-			this.buttonSVNCheck.UseVisualStyleBackColor = true;
-			this.buttonSVNCheck.Click += new System.EventHandler(this.buttonSVNCheck_Click);
-			// 
 			// CheckVersion
 			// 
-			this.CheckVersion.AutoSize = true;
+			this.CheckVersion.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.CheckVersion.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-			this.CheckVersion.Location = new System.Drawing.Point(96, 112);
+			this.CheckVersion.Location = new System.Drawing.Point(0, 137);
+			this.CheckVersion.Margin = new System.Windows.Forms.Padding(3, 0, 3, 10);
 			this.CheckVersion.Name = "CheckVersion";
-			this.CheckVersion.Size = new System.Drawing.Size(55, 13);
+			this.CheckVersion.Size = new System.Drawing.Size(267, 13);
 			this.CheckVersion.TabIndex = 11;
 			this.CheckVersion.TabStop = true;
 			this.CheckVersion.Text = "linkLabel1";
+			this.CheckVersion.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
 			this.CheckVersion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.CheckVersion_LinkClicked);
 			// 
 			// PluginUI
@@ -378,7 +380,6 @@ namespace Version
 			((System.ComponentModel.ISupportInitialize)(this.vMinor)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.vBuild)).EndInit();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
