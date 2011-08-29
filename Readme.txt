@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 3.0.119 - August 29, 2011
+      * bug fix in reading Version.as if xml is deleted
+      
      / 3.0.114 - July 12, 2011
       * change to support new Air version number attribute
 

@@ -283,6 +283,7 @@ namespace Version
 			else
 			{
 				string __foundVersionFilePath = FindVersionFile(GetPath());
+				//MessageBox.Show(__foundVersionFilePath);
 				if (__foundVersionFilePath != string.Empty)
 				{
 					pluginUI.enableVersion();
@@ -296,6 +297,10 @@ namespace Version
 					}
 					SaveVersionXml();
 					ReadVersionXml();
+				}
+				else
+				{
+					__isVersionned = false;
 				}
 			}
 			if (!__isVersionned)
@@ -434,14 +439,19 @@ namespace Version
 
         private string getValue(String __content, String __pattern, int __idx)
         {
-			MatchCollection __matches = Regex.Matches(__content, __pattern);
-            //pluginUI.Debug.Text += "matches: " + mMatches.Count + "\n";
+			//MessageBox.Show(__pattern);
 			
+			MatchCollection __matches = Regex.Matches(__content, __pattern);
+			//MessageBox.Show(__matches.Count.ToString());
+            //pluginUI.Debug.Text += "matches: " + mMatches.Count + "\n";
 			if (__matches.Count > 0)
 			{
 				GroupCollection __gc = __matches[0].Groups;
-				CaptureCollection __cc = __gc[1].Captures;
-				return __cc[__idx].Value;
+				//MessageBox.Show(__gc[_idx + 1].ToString());
+				CaptureCollection __cc = __gc[__idx + 1].Captures;
+				//MessageBox.Show(__cc.Count.ToString());
+				//MessageBox.Show(__cc.Count.ToString() + ":" + __cc[__idx].Value);
+				return __cc[0].Value;
 			}
 			else
 			{
