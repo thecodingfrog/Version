@@ -50,7 +50,7 @@ namespace Version
 		private String __packagePath;
 		private bool __isVersionned = false;
         private CompilationModes __lastAction;
-		private Language __language;
+		private Language __language = Language.AS3;
 
 	    #region Required Properties
 
@@ -246,12 +246,13 @@ namespace Version
         {
             IProject __project = PluginBase.CurrentProject;
 			
-			switch (__project.Language)
+			switch (__project.Language.ToLower())
 			{
 				case "as2":
 					__language = Language.AS2;
 					break;
 				case "as3":
+				default:
 					__language = Language.AS3;
 					break;
 			}
@@ -755,6 +756,8 @@ namespace Version
 
 		private void SaveVersionXml()
 		{
+			decimal __tempvBuild = __vBuild;
+
 			if (!Directory.Exists(GetPath() + "\\obj"))
 				Directory.CreateDirectory(GetPath() + "\\obj");
 
@@ -791,14 +794,16 @@ namespace Version
 
 					XmlNode __root = __xmlDoc.DocumentElement;
 					XmlNode __nodeVersion = __root.SelectSingleNode("/air:application/air:version", __NsMgr);
+					if (__vBuild > 999)
+						__tempvBuild = 999;
 					if (__nodeVersion != null)
 					{
-						__nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __vBuild;
+						__nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __tempvBuild;
 					}
 					__nodeVersion = __root.SelectSingleNode("/air:application/air:versionNumber", __NsMgr);
 					if (__nodeVersion != null)
 					{
-						__nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __vBuild;
+						__nodeVersion.InnerText = __vMajor + "." + __vMinor + "." + __tempvBuild;
 					}
 					__xmlDoc.Save(__projectBaseDir + "\\application.xml");
 				}

@@ -35,6 +35,9 @@ Known Bugs/Issues
 
 Version History
 
+     / 3.0.120 - October 26, 2011
+      + build limitation set to 999 due to AIR limitation
+      
      / 3.0.119 - August 29, 2011
       * bug fix in reading Version.as if xml is deleted
       
