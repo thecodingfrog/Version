@@ -383,6 +383,8 @@ namespace Version
 						Directory.CreateDirectory(__sourcePath + __versionFilePath);
 					}
 
+					if (__versionFilePath == "") __versionFilePath = "./";
+
 					__isVersionned = true;
 					CheckVersionFile();
 					CreateVersionFile(__vMajor, __vMinor, __vBuild, __vRevision, DateTime.Now, __vAuthor);
@@ -887,12 +889,13 @@ namespace Version
 			SvnClient __svnClient = new SvnClient();
             SvnInfoEventArgs __sieaInfo;
             bool __getInfo;
-			
+			//MessageBox.Show(__versionFilePath);
 			if (__versionFilePath != "")
             {
 				try
 				{
-					__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(GetSourcePath() + __versionFilePath + "\\" + settingObject.ClassName + ".as"), out __sieaInfo);
+                   __getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(GetSourcePath() + __versionFilePath + settingObject.ClassName + ".as"), out __sieaInfo);
+					//MessageBox.Show(__sieaInfo.ToString()); 
 					pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
 					__vRevision = (int)__sieaInfo.LastChangeRevision;
 				}
@@ -900,6 +903,7 @@ namespace Version
 				{
 					try
 					{
+						//MessageBox.Show(">" + e.Message); 
 						__getInfo = __svnClient.GetInfo(SvnPathTarget.FromString(GetSourcePath() + __versionFilePath), out __sieaInfo);
 						pluginUI.Revision.Text = __sieaInfo.LastChangeRevision.ToString();
 						__vRevision = (int)__sieaInfo.LastChangeRevision;
